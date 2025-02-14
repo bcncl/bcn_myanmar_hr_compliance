@@ -242,3 +242,21 @@ override_doctype_class = {
 # 	"Logging DocType Name": 30  # days to retain logs
 # }
 
+
+# Fixtures
+# --------
+
+fixtures = [
+	{
+		"doctype": "Custom Field",
+		"filters": [
+			[
+				"name",
+				"in",
+				(
+					"Income Tax Slab-custom_bcn_is_myanmar_pit_compliance",
+				)
+			]
+		]
+	}
+]
