@@ -43,7 +43,13 @@ app_license = "mit"
 # page_js = {"page" : "public/js/file.js"}
 
 # include js in doctype views
-# doctype_js = {"doctype" : "public/js/doctype.js"}
+doctype_js = {
+	"Salary Component" : "public/js/hrms/salary_component.js",
+	"Salary Structure" : "public/js/hrms/salary_structure.js",
+	"Salary Slip": "public/js/hrms/salary_slip.js",
+	"Payroll Entry": "public/js/hrms/payroll_entry.js"
+}
+
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
@@ -131,6 +137,10 @@ app_license = "mit"
 
 override_doctype_class = {
 	"Salary Slip": "bcn_myanmar_hr_compliance.bcn_myanmar_payroll.overrides.salary_slip.BCNSalarySlip",
+	"Employee Tax Exemption Declaration": "bcn_myanmar_hr_compliance.bcn_myanmar_payroll.overrides.employee_tax_exemption_declaration.BCNEmployeeTaxExemptionDeclaration",
+	"Employee Tax Exemption Proof Submission": "bcn_myanmar_hr_compliance.bcn_myanmar_payroll.overrides.employee_tax_exemption_proof_submission.BCNEmployeeTaxExemptionProofSubmission",
+	"Salary Component": "bcn_myanmar_hr_compliance.bcn_myanmar_payroll.overrides.salary_component.BCNSalaryComponent",
+	"Payroll Entry": "bcn_myanmar_hr_compliance.bcn_myanmar_payroll.overrides.payroll_entry.BCNPayrollEntry"
 }
 
 # Document Events
@@ -254,7 +264,58 @@ fixtures = [
 				"name",
 				"in",
 				(
-					"Income Tax Slab-custom_bcn_is_myanmar_pit_compliance",
+					"Company-custom_bcn_default_contribution_expense_account",					
+					"Employee Tax Exemption Declaration-custom_bcn_from_date",
+					"Employee Tax Exemption Proof Submission-custom_bcn_from_date",                
+					"Employee-custom_bcn_myanmar_compliance_tab",
+					"Employee-custom_bcn_ssb_section",
+					"Employee-custom_bcn_enable_ssc",
+					"Employee-custom_bcn_ssc_hscis_category", 
+					"Income Tax Slab-custom_bcn_is_myanmar_pit_compliance",                   
+					"Payroll Entry-custom_bcn_contribution_expense_account",                    
+					"Salary Slip-custom_bcn_contributions_tab",
+					"Salary Slip-custom_bcn_contributions",
+					"Salary Slip-custom_bcn_contributions_column",
+					"Salary Slip-custom_bcn_contributed_amount_till_date",
+					"Salary Slip-custom_bcn_current_month_contribution",
+					"Salary Slip-custom_bcn_future_contribution",                    
+					"Salary Slip-custom_bcn_contributions_totals_section",
+					"Salary Slip-custom_bcn_total_contribution",                    
+					"Salary Slip-custom_bcn_base_total_contribution",		
+					"Salary Slip-custom_bcn_total_contributions",
+					"Salary Slip-custom_bcn_myanmar_compliance_tab",
+					"Salary Slip-custom_bcn_myanmar_pit_section",
+					"Salary Slip-custom_bcn_myanmar_pit_applied",
+					"Salary Slip-custom_bcn_myanmar_ssb_section",
+					"Salary Slip-custom_bcn_myanmar_ssc_applied"           
+				)
+			]
+		],
+	},
+    {
+		"doctype": "Salary Component",
+		"filters": [
+			[
+				"name",
+				"in",
+				(
+					"SSC 2%",
+					"SSC 2.5%",
+					"SSC 1% (EC)",
+					"SSC 2% (EC)",
+					"SSC 2.5% (EC)",
+				)
+			]
+		],
+	},
+    {
+		"doctype": "Property Setter",
+		"filters": [
+			[
+				"name",
+				"in",
+				(
+					"Salary Component-type-options"
 				)
 			]
 		]
