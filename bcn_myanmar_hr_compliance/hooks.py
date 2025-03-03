@@ -136,6 +136,7 @@ doctype_js = {
 # Override standard doctype classes
 
 override_doctype_class = {
+    "Employee": "bcn_myanmar_hr_compliance.bcn_myanmar_payroll.overrides.employee.BCNEmployee",
 	"Salary Slip": "bcn_myanmar_hr_compliance.bcn_myanmar_payroll.overrides.salary_slip.BCNSalarySlip",
 	"Employee Tax Exemption Declaration": "bcn_myanmar_hr_compliance.bcn_myanmar_payroll.overrides.employee_tax_exemption_declaration.BCNEmployeeTaxExemptionDeclaration",
 	"Employee Tax Exemption Proof Submission": "bcn_myanmar_hr_compliance.bcn_myanmar_payroll.overrides.employee_tax_exemption_proof_submission.BCNEmployeeTaxExemptionProofSubmission",
