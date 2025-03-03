@@ -11,11 +11,8 @@ class BCNEmployee(EmployeeMaster):
 		super(BCNEmployee, self).validate()
 
 		""" Validate Enable SSC """
-		if self.custom_bcn_enable_ssc and not self.custom_bcn_ssc_hscis_category:
-			frappe.throw("Please select `Health and Social Care Insurance System Category` for Employee")
-		
-	
-	
-			
-		
-	
+		if self.custom_bcn_enable_ssc:
+			if not self.custom_bcn_ssc_hscis_category:
+				frappe.throw("Please select `Health and Social Care Insurance System Category` for Employee")
+		else:
+			self.custom_bcn_ssc_hscis_category = None
