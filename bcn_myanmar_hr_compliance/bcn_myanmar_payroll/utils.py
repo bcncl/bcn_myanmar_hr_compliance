@@ -4,13 +4,14 @@
 import frappe
 from frappe import _
 from frappe.utils import (
-	add_days,
 	getdate,
+	formatdate,
 	get_first_day,
 	get_last_day,
+	get_link_to_form
 )
-from hrms.hr.utils import (DuplicateDeclarationError)	
 
+from hrms.hr.utils import (DuplicateDeclarationError)	
 
 def validate_duplicate_exemption_for_payroll_period(doctype, docname, payroll_period, from_date, employee):
 	start_date = getdate(get_first_day(from_date))
@@ -29,5 +30,19 @@ def validate_duplicate_exemption_for_payroll_period(doctype, docname, payroll_pe
 		frappe.throw(
 			_("{0} already exists for employee {1} and period {2} ({3})").format(doctype, employee, payroll_period, from_date.strftime("%B")),
 			DuplicateDeclarationError,
+		)
+
+def validate_existing_salary_slip_of_selected_exemption_from_date(from_date, employee):
+	existing_salary_slip = frappe.db.exists("Salary Slip", {
+		"docstatus": 1,
+		"employee": employee,
+		"start_date": [">=", getdate(from_date)]
+	})
+
+	if existing_salary_slip:
+		frappe.throw(
+			_("Salary Slip aleardy submitted for Employee {0} on this period {1}").format(
+				frappe.bold(get_link_to_form("Employee", employee)), frappe.bold(formatdate(from_date))
+			)
 		)
 

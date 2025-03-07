@@ -1,0 +1,126 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-03-05 16:39:35.558097",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "pit_tab_tab",
+  "basic_relief_section_section",
+  "basic_relief_percentage",
+  "max_basic_relief_amount",
+  "income_tax_slab_section_section",
+  "standard_tax_exemption_amount",
+  "default_pit_tax_slab",
+  "salary_components_tab_tab",
+  "default_earnings_and_deductions_section_section",
+  "default_earnings",
+  "column_break_ksry",
+  "default_deductions",
+  "contributions_section_section",
+  "default_contributions",
+  "column_break_vyg8"
+ ],
+ "fields": [
+  {
+   "fieldname": "basic_relief_percentage",
+   "fieldtype": "Int",
+   "label": "Basic Relief %"
+  },
+  {
+   "fieldname": "max_basic_relief_amount",
+   "fieldtype": "Currency",
+   "label": "Maximum Basic Relief Amount"
+  },
+  {
+   "fieldname": "standard_tax_exemption_amount",
+   "fieldtype": "Currency",
+   "label": "Standard Tax Exemption Amount"
+  },
+  {
+   "fieldname": "default_pit_tax_slab",
+   "fieldtype": "Table",
+   "label": "Default PIT Tax Slab",
+   "options": "Taxable Salary Slab"
+  },
+  {
+   "fieldname": "default_earnings",
+   "fieldtype": "Table",
+   "label": "Earnings",
+   "options": "BCN Salary Components"
+  },
+  {
+   "fieldname": "column_break_ksry",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "default_deductions",
+   "fieldtype": "Table",
+   "label": "Deductions",
+   "options": "BCN Salary Components"
+  },
+  {
+   "fieldname": "default_contributions",
+   "fieldtype": "Table",
+   "label": "Contributions",
+   "options": "BCN Salary Components"
+  },
+  {
+   "fieldname": "column_break_vyg8",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "pit_tab_tab",
+   "fieldtype": "Tab Break",
+   "label": "Personal Income Tax"
+  },
+  {
+   "fieldname": "basic_relief_section_section",
+   "fieldtype": "Section Break",
+   "label": "Basic Relief"
+  },
+  {
+   "fieldname": "income_tax_slab_section_section",
+   "fieldtype": "Section Break",
+   "label": "Income Tax Slab"
+  },
+  {
+   "fieldname": "salary_components_tab_tab",
+   "fieldtype": "Tab Break",
+   "label": "Salary Components"
+  },
+  {
+   "fieldname": "default_earnings_and_deductions_section_section",
+   "fieldtype": "Section Break",
+   "label": "Default Earnings and Deductions"
+  },
+  {
+   "fieldname": "contributions_section_section",
+   "fieldtype": "Section Break",
+   "label": "Default Contributions"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2025-03-07 11:02:15.586255",
+ "modified_by": "Administrator",
+ "module": "BCN Myanmar Payroll",
+ "name": "BCN Myanmar HR Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

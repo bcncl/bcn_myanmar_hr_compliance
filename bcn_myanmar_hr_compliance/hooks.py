@@ -265,19 +265,31 @@ fixtures = [
 				"name",
 				"in",
 				(
-					"Company-custom_bcn_default_contribution_expense_account",					
+					"Company-custom_bcn_default_contribution_expense_account",		
+                    			
 					"Employee Tax Exemption Declaration-custom_bcn_from_date",
 					"Employee Tax Exemption Proof Submission-custom_bcn_from_date",                
 					"Employee-custom_bcn_myanmar_compliance_tab",
 					"Employee-custom_bcn_ssb_section",
 					"Employee-custom_bcn_enable_ssc",
+                    "Employee-custom_bcn_ssc_registration_no",
 					"Employee-custom_bcn_ssc_hscis_category", 
+                    
 					"Income Tax Slab-custom_bcn_is_myanmar_pit_compliance",
+                    
+                    "Salary Component-custom_bcn_myanmar_compliance_tab",
+                    "Salary Component-custom_bcn_is_myanmar_ssc",
+                    "Salary Component-custom_bcn_is_one_time_contribution",
+                    
                     "Salary Structure-custom_bcn_contributions_tab",
                     "Salary Structure-custom_bcn_contributions_detail_section",
                     "Salary Structure-custom_bcn_contributions",
-                    "Salary Structure-custom_bcn_total_contribution",                   
-					"Payroll Entry-custom_bcn_contribution_expense_account",                    
+                    "Salary Structure-custom_bcn_total_contribution", 
+                    
+					"Salary Structure Assignment-custom_bcn_exempted_from_income_tax_till_date",
+                                      
+					"Payroll Entry-custom_bcn_contribution_expense_account",   
+                                     
 					"Salary Slip-custom_bcn_contributions_tab",
 					"Salary Slip-custom_bcn_contributions",
 					"Salary Slip-custom_bcn_contributions_column",
@@ -320,7 +332,9 @@ fixtures = [
 				"name",
 				"in",
 				(
-					"Salary Component-type-options"
+					"Salary Component-type-options",
+                    # "Salary Structure Assignment-taxable_earnings_till_date-allow_on_submit",
+                    # "Salary Structure Assignment-tax_deducted_till_date-allow_on_submit"
 				)
 			]
 		]
