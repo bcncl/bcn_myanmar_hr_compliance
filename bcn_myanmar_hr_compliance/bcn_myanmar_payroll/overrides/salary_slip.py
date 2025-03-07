@@ -39,7 +39,7 @@ class BCNSalarySlip(SalarySlip):
 			self.tax_exemption_declaration = (
 				self.get_total_exemption_amount() - self.standard_tax_exemption_amount
 			)
-
+				
 		self.annual_taxable_amount = self.total_earnings - (
 			self.non_taxable_earnings
 			+ self.deductions_before_tax_calculation
@@ -60,6 +60,13 @@ class BCNSalarySlip(SalarySlip):
 				"full_tax_on_additional_earnings", 0
 			)
 
+			# ATTENTATION: reset minus value to 0
+			if self.future_income_tax_deductions < 0:
+				self.future_income_tax_deductions = 0
+
+			if self.current_month_income_tax < 0:
+				self.current_month_income_tax = 0
+
 			# non included current_month_income_tax separately as its already considered
 			# while calculating income_tax_deducted_till_date
 
@@ -71,6 +78,7 @@ class BCNSalarySlip(SalarySlip):
 				basic_relief = self.total_earnings * 0.2
 				self.standard_tax_exemption_amount = basic_relief if basic_relief < 10000000 else 10000000		
 
+			# ATTENTATION: reset minus value to 0
 			if self.annual_taxable_amount < 0.0:
 				self.annual_taxable_amount = 0.0
 	
@@ -199,5 +207,48 @@ class BCNSalarySlip(SalarySlip):
 			)
 		return 0.0
 
+	def compute_annual_deductions_before_tax_calculation(self):
+		annual_deductions_before_tax_calculation = super(BCNSalarySlip, self).compute_annual_deductions_before_tax_calculation()	
+
+		return (
+			self.get_opening_exempted_before_tax_calculation()
+			+ annual_deductions_before_tax_calculation
+		)
 	
+	def get_taxable_earnings_for_prev_period(self, start_date, end_date, allow_tax_exemption=False):
+		taxable_earnings, exempted_amount = super(BCNSalarySlip, self).get_taxable_earnings_for_prev_period(start_date, end_date, allow_tax_exemption)
+
+		opening_exempted_amount = self.get_opening_exempted_before_tax_calculation()
+		if opening_exempted_amount:
+			taxable_earnings -= opening_exempted_amount
+			exempted_amount += opening_exempted_amount
+
+		return taxable_earnings, exempted_amount
 	
+	def get_opening_exempted_before_tax_calculation(self):
+		if self.payroll_period:
+			return self.get_opening_for("custom_bcn_exempted_from_income_tax_till_date", self.payroll_period.start_date, self.end_date) or 0
+		return 0
+	
+	def get_opening_for(self, field_to_select, start_date, end_date):
+		if not (start_date and end_date):
+			return
+
+		if not hasattr(self, "_opening_salary_structure_assignment"):
+			opening_salary_structure_assignment = frappe.db.get_list(
+				"Salary Structure Assignment",
+				filters={
+					"employee": self.employee,
+					"from_date": ("BETWEEN", (start_date, end_date)),
+					"docstatus": 1,
+				},
+				fields=["*"],
+				order_by="from_date",
+				limit=1,
+				# as_dict=True,
+			)
+			self._opening_salary_structure_assignment = opening_salary_structure_assignment and opening_salary_structure_assignment[0] or frappe._dict()
+
+			# frappe.throw(f'Here: {self._opening_salary_structure_assignment}')
+			# frappe.throw('foo')
+		return self._opening_salary_structure_assignment.get(field_to_select) or 0
