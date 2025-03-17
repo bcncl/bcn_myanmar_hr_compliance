@@ -15,5 +15,33 @@ frappe.ui.form.on("Salary Slip", {
 				},
 			};
 		});
-    }
+    },	
 });
+
+// frappe.ui.form.on("BCN Contribution Detail", {
+// 	salary_component: function (frm, cdt, cdn) {
+// 		var child = locals[cdt][cdn];
+// 		if (child.salary_component) {
+// 			frappe.call({
+// 				method: "frappe.client.get",
+// 				args: {
+// 					doctype: "Salary Component",
+// 					name: child.salary_component,
+// 				},
+// 				callback: function (data) {
+// 					if (data.message) {
+// 						var result = data.message;
+						
+// 						frappe.model.set_value(
+// 							cdt,
+// 							cdn,
+// 							"is_one_time_contribution",
+// 							result.custom_bcn_is_one_time_contribution,
+// 						);						
+// 						refresh_field("custom_bcn_contributions");
+// 					}
+// 				},
+// 			});
+// 		}
+// 	},
+// });
