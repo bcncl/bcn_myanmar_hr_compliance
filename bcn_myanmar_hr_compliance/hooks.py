@@ -137,6 +137,7 @@ doctype_js = {
 
 override_doctype_class = {
     "Employee": "bcn_myanmar_hr_compliance.bcn_myanmar_payroll.overrides.employee.BCNEmployee",
+    "Salary Structure": "bcn_myanmar_hr_compliance.bcn_myanmar_payroll.overrides.salary_structure.BCNSalaryStructure",
 	"Salary Slip": "bcn_myanmar_hr_compliance.bcn_myanmar_payroll.overrides.salary_slip.BCNSalarySlip",
 	"Employee Tax Exemption Declaration": "bcn_myanmar_hr_compliance.bcn_myanmar_payroll.overrides.employee_tax_exemption_declaration.BCNEmployeeTaxExemptionDeclaration",
 	"Employee Tax Exemption Proof Submission": "bcn_myanmar_hr_compliance.bcn_myanmar_payroll.overrides.employee_tax_exemption_proof_submission.BCNEmployeeTaxExemptionProofSubmission",
@@ -285,7 +286,7 @@ fixtures = [
                     "Salary Structure-custom_bcn_contributions_detail_section",
                     "Salary Structure-custom_bcn_contributions",
                     "Salary Structure-custom_bcn_total_contribution", 
-                    
+                                        
 					"Salary Structure Assignment-custom_bcn_exempted_from_income_tax_till_date",
                                       
 					"Payroll Entry-custom_bcn_contribution_expense_account",   

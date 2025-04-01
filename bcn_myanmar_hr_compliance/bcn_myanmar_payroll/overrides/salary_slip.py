@@ -2,11 +2,13 @@
 # License: MIT. See license.txt
 
 import frappe
-from frappe.utils import flt, ceil
+from frappe import _, bold
+from frappe.utils import flt, ceil, get_link_to_form
 from hrms.payroll.doctype.salary_slip.salary_slip import SalarySlip
 from hrms.payroll.utils import sanitize_expression
+from frappe.query_builder.functions import Count, Sum
 
-class BCNSalarySlip(SalarySlip):	
+class BCNSalarySlip(SalarySlip):
 	def compute_income_tax_breakup(self):
 		if not self.payroll_period:
 			return
@@ -179,31 +181,68 @@ class BCNSalarySlip(SalarySlip):
 			self.add_employer_contributions()
 			
 	def add_employer_contributions(self):
-		self.previous_contributions = self.get_salary_slip_details(
-			self.payroll_period.start_date, self.start_date, parentfield="custom_bcn_contributions"
+		self.previous_contributions = self.get_contribution_details(
+			self.payroll_period.start_date, self.start_date
 		)
 		
 		self.current_month_structured_contribution = 0.0
+		self.one_time_contribution = 0.0
 		for contribution in  self.custom_bcn_contributions:
 			self.current_month_structured_contribution += flt(contribution.amount, contribution.precision("amount"))
-
+			
+			if contribution.is_one_time_contribution == 1:
+				self.one_time_contribution += flt(contribution.amount, contribution.precision("amount"))
+		
 		self.future_structured_contributions = 0.0
 		self.future_structured_contributions = (
-			self.current_month_structured_contribution * (ceil(self.remaining_sub_periods) - 1)
+			(self.current_month_structured_contribution - self.one_time_contribution) * (ceil(self.remaining_sub_periods) - 1)
 		)
-
+		
 		self.custom_bcn_contributed_amount_till_date = self.previous_contributions + self.current_month_structured_contribution
 		self.custom_bcn_current_month_contribution = self.current_month_structured_contribution
 		self.custom_bcn_future_contribution = self.future_structured_contributions
 
 		return self.previous_contributions, self.current_month_structured_contribution, self.future_structured_contributions
+	
+	def get_contribution_details(
+		self,
+		start_date,
+		end_date,
+		salary_component=None,
+		field_to_select="amount",
+	):
+		ss = frappe.qb.DocType("Salary Slip")
+		sd = frappe.qb.DocType("BCN Contribution Detail")
+
+		if field_to_select == "amount":
+			field = sd.amount
+		else:
+			field = sd.additional_amount
+
+		query = (
+			frappe.qb.from_(ss)
+			.join(sd)
+			.on(sd.parent == ss.name)
+			.select(Sum(field))
+			.where(ss.docstatus == 1)
+			.where(ss.employee == self.employee)
+			.where(ss.start_date.between(start_date, end_date))
+			.where(ss.end_date.between(start_date, end_date))
+		)
+		
+		if salary_component:
+			query = query.where(sd.salary_component == salary_component)
+
+		result = query.run()
+
+		return flt(result[0][0]) if result else 0.0
 
 	def compute_total_contributions(self):
 		if hasattr(self, "previous_contributions"):
 			return (
 				self.previous_contributions
 				+ self.current_month_structured_contribution
-				+ self.future_structured_contributions		
+				+ self.future_structured_contributions	
 			)
 		return 0.0
 
