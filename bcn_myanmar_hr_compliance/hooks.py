@@ -319,9 +319,9 @@ fixtures = [
 				(
 					"SSC 2%",
 					"SSC 2.5%",
-					"SSC 1% (EC)",
-					"SSC 2% (EC)",
-					"SSC 2.5% (EC)",
+					"SSC 1% (ER)",
+					"SSC 2% (ER)",
+					"SSC 2.5% (ER)",
 				)
 			]
 		],
