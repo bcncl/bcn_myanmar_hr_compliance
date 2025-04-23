@@ -9,6 +9,23 @@ from hrms.payroll.utils import sanitize_expression
 from frappe.query_builder.functions import Count, Sum
 
 class BCNSalarySlip(SalarySlip):
+	def before_save(self):		
+		self.check_draft_status_slip()
+
+	def check_draft_status_slip(self):
+		drafting_slip = frappe.db.get_list("Salary Slip", 
+			filters = {	
+				"docstatus": 0,
+				"name": ["!=", self.name],
+				"posting_date": ["<", self.posting_date],
+				"posting_date": ["between", [self.payroll_period.start_date, self.payroll_period.end_date]],
+			},
+			
+			pluck = "name"
+		)
+		if len(drafting_slip) > 0:
+			frappe.throw("Please submit the draft salary slip for last month first.")
+
 	def compute_income_tax_breakup(self):
 		if not self.payroll_period:
 			return
@@ -185,7 +202,7 @@ class BCNSalarySlip(SalarySlip):
 	
 	def add_additional_salary_contribution_components(self, component_type):		
 		additional_salaries = self.get_contribution_additional_salaries(
-			self.employee, self.start_date, self.end_date
+			self.employee, self.start_date, self.end_date, component_type
 		)	
 		
 		for additional_salary in additional_salaries:
@@ -214,72 +231,73 @@ class BCNSalarySlip(SalarySlip):
 			cache=True,
 		)
 	
-	def get_contribution_additional_salaries(self, employee, start_date, end_date):		
+	def get_contribution_additional_salaries(self, employee, start_date, end_date, component_type):		
 		from frappe.query_builder import Criterion  
 		
-		comp_type = "Contribution" 
+		if component_type == "custom_bcn_contributions":
+			comp_type = "Contribution" 
 
-		additional_sal = frappe.qb.DocType("Additional Salary")
-		component_field = additional_sal.salary_component.as_("component")
-		overwrite_field = additional_sal.overwrite_salary_structure_amount.as_("overwrite")
+			additional_sal = frappe.qb.DocType("Additional Salary")
+			component_field = additional_sal.salary_component.as_("component")
+			overwrite_field = additional_sal.overwrite_salary_structure_amount.as_("overwrite")
 
-		additional_salary_list = (
-		    frappe.qb.from_(additional_sal)
-		    .select(
-		        additional_sal.name,
-		        component_field,
-		        additional_sal.type,
-		        additional_sal.amount,
-		        additional_sal.is_recurring,
-		        overwrite_field,
-		        additional_sal.deduct_full_tax_on_selected_payroll_date,
-		    )
-		    .where(
-		        (additional_sal.employee == employee)
-		        & (additional_sal.docstatus == 1)
-		        & (additional_sal.type == comp_type)
-		        & (additional_sal.disabled == 0)
-		    )
-		    .where(
-		        Criterion.any(
-		            [
-		                Criterion.all(
-		                    [  # is recurring and additional salary dates fall within the payroll period
-		                        additional_sal.is_recurring == 1,
-		                        additional_sal.from_date <= end_date,
-		                        additional_sal.to_date >= end_date,
-		                    ]
-		                ),
-		                Criterion.all(
-		                    [  # is not recurring and additional salary's payroll date falls within the payroll period
-		                        additional_sal.is_recurring == 0,
-		                        additional_sal.payroll_date[start_date:end_date],
-		                    ]
-		                ),
-		            ]
-		        )
-		    )
-		    .run(as_dict=True)
-		)
-
-		additional_salaries = []
-		components_to_overwrite = []
-
-		for d in additional_salary_list:
-			if d.overwrite:
-				if d.component in components_to_overwrite:
-					frappe.throw(
-					_(
-					"Multiple Additional Salaries with overwrite property exist for Salary Component {0} between {1} and {2}."
-					).format(frappe.bold(d.component), start_date, end_date),
-					title=_("Error"),
+			additional_salary_list = (
+				frappe.qb.from_(additional_sal)
+				.select(
+					additional_sal.name,
+					component_field,
+					additional_sal.type,
+					additional_sal.amount,
+					additional_sal.is_recurring,
+					overwrite_field,
+					additional_sal.deduct_full_tax_on_selected_payroll_date,
+				)
+				.where(
+					(additional_sal.employee == employee)
+					& (additional_sal.docstatus == 1)
+					& (additional_sal.type == comp_type)
+					& (additional_sal.disabled == 0)
+				)
+				.where(
+					Criterion.any(
+						[
+							Criterion.all(
+								[  # is recurring and additional salary dates fall within the payroll period
+									additional_sal.is_recurring == 1,
+									additional_sal.from_date <= end_date,
+									additional_sal.to_date >= end_date,
+								]
+							),
+							Criterion.all(
+								[  # is not recurring and additional salary's payroll date falls within the payroll period
+									additional_sal.is_recurring == 0,
+									additional_sal.payroll_date[start_date:end_date],
+								]
+							),
+						]
 					)
+				)
+				.run(as_dict=True)
+			)
 
-				components_to_overwrite.append(d.component)
+			additional_salaries = []
+			components_to_overwrite = []
 
-			additional_salaries.append(d)
+			for d in additional_salary_list:
+				if d.overwrite:
+					if d.component in components_to_overwrite:
+						frappe.throw(
+						_(
+						"Multiple Additional Salaries with overwrite property exist for Salary Component {0} between {1} and {2}."
+						).format(frappe.bold(d.component), start_date, end_date),
+						title=_("Error"),
+						)
 
-		return additional_salaries
+					components_to_overwrite.append(d.component)
+
+				additional_salaries.append(d)
+
+			return additional_salaries
 		
 	def add_employer_contributions(self):
 		self.previous_contributions = self.get_contribution_details(
