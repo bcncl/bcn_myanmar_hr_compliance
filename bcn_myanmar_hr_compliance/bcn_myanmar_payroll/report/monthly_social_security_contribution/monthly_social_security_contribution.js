@@ -43,6 +43,32 @@ frappe.query_reports["Monthly Social Security Contribution"] = {
 			default: frappe.defaults.get_user_default("Company"),
 			width: "100px",
 			reqd: 1,
+			"on_change": function(rpt) {
+				set_company_ssc_reg_no(rpt)
+			}
 		},
-	]
+
+		{
+			fieldname: "company_ssc_reg_no",
+			label: __("Company SSC Registration No"),
+			fieldtype: "Data",
+			width: "100px",
+			read_only: 1	
+		},
+	],
+	onload(rpt) {
+		set_company_ssc_reg_no(rpt)
+	}
 };
+
+const set_company_ssc_reg_no = (rpt) => {
+	rpt.set_filter_value("company_ssc_reg_no", null)
+	let company =rpt.get_filter_value("company")
+	
+	if (!company) return
+
+	frappe.db.get_value("Company", company, "custom_bcn_ssc_registration_no")
+		.then(r => {
+			rpt.set_filter_value("company_ssc_reg_no", r.message.custom_bcn_ssc_registration_no)
+		})
+}

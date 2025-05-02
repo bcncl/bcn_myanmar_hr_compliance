@@ -11,7 +11,7 @@ def execute(filters=None):
 	salary_name_list = []
 	employee_salary_map = {}
 	employee_list = []
-	
+
 	for salary in salaries:
 		salary_name_list.append(salary.name)
 		employee_salary_map[salary.name]= salary
