@@ -18,13 +18,14 @@ class BCNSalarySlip(SalarySlip):
 				"docstatus": 0,
 				"name": ["!=", self.name],
 				"posting_date": ["<", self.posting_date],
+			},
+			or_filters = {
 				"posting_date": ["between", [self.payroll_period.start_date, self.payroll_period.end_date]],
 			},
-			
 			pluck = "name"
 		)
-		if len(drafting_slip) > 0:
-			frappe.throw("Please submit the draft salary slip for last month first.")
+		# if len(drafting_slip) > 0:
+		# 	frappe.throw("Please submit the draft salary slip for last month first.")
 
 	def compute_income_tax_breakup(self):
 		if not self.payroll_period:
@@ -50,7 +51,11 @@ class BCNSalarySlip(SalarySlip):
 			self.custom_bcn_myanmar_pit_applied = self.tax_slab.custom_bcn_is_myanmar_pit_compliance
 
 			if self.tax_slab.allow_tax_exemption:
-				self.standard_tax_exemption_amount = self.tax_slab.standard_tax_exemption_amount
+				if self.total_earnings > self.standard_tax_exemption_amount:
+					self.standard_tax_exemption_amount = self.tax_slab.standard_tax_exemption_amount
+				else:
+					self.standard_tax_exemption_amount = 0
+
 				self.deductions_before_tax_calculation = (
 					self.compute_annual_deductions_before_tax_calculation()
 				)
@@ -95,7 +100,9 @@ class BCNSalarySlip(SalarySlip):
 		if self.custom_bcn_myanmar_pit_applied:
 			if self.total_earnings > self.standard_tax_exemption_amount:				
 				basic_relief = self.total_earnings * 0.2
-				self.standard_tax_exemption_amount = basic_relief if basic_relief < 10000000 else 10000000		
+				self.standard_tax_exemption_amount = basic_relief if basic_relief < 10000000 else 10000000	
+			else:
+				self.standard_tax_exemption_amount = 0	
 
 			# ATTENTATION: reset minus value to 0
 			if self.annual_taxable_amount < 0.0:
@@ -136,14 +143,13 @@ class BCNSalarySlip(SalarySlip):
 				if declaration:
 					total_exemption_amount = declaration[0]
 			
-
 		if self.tax_slab.standard_tax_exemption_amount:			
 			if self.custom_bcn_myanmar_pit_applied and self.total_earnings and self.standard_tax_exemption_amount:
-				if self.total_earnings <= self.standard_tax_exemption_amount:
-					total_exemption_amount += flt(self.standard_tax_exemption_amount)
-				else:
+				if self.total_earnings > self.standard_tax_exemption_amount:
 					basic_relief = self.total_earnings * 0.2
 					self.standard_tax_exemption_amount = basic_relief if basic_relief < 10000000 else 10000000
+					total_exemption_amount += flt(self.standard_tax_exemption_amount)
+				else:
 					total_exemption_amount += flt(self.standard_tax_exemption_amount)
 			else:
 				total_exemption_amount += flt(self.standard_tax_exemption_amount)	
