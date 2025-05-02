@@ -160,23 +160,23 @@ override_doctype_class = {
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
-# 	"all": [
-# 		"bcn_myanmar_hr_compliance.tasks.all"
-# 	],
-# 	"daily": [
-# 		"bcn_myanmar_hr_compliance.tasks.daily"
-# 	],
-# 	"hourly": [
-# 		"bcn_myanmar_hr_compliance.tasks.hourly"
-# 	],
-# 	"weekly": [
-# 		"bcn_myanmar_hr_compliance.tasks.weekly"
-# 	],
-# 	"monthly": [
-# 		"bcn_myanmar_hr_compliance.tasks.monthly"
-# 	],
-# }
+scheduler_events = {
+	# "all": [
+	# 	"bcn_myanmar_hr_compliance.tasks.all"
+	# ],
+	# "daily": [
+	# 	"bcn_myanmar_hr_compliance.bcn_myanmar_payroll.utils.auto_create_payroll_period",
+	# ],
+	# "hourly": [
+	# 	"bcn_myanmar_hr_compliance.tasks.hourly"
+	# ],
+	# "weekly": [
+	# 	"bcn_myanmar_hr_compliance.tasks.weekly"
+	# ],
+	# "monthly": [
+	# 	"bcn_myanmar_hr_compliance.tasks.monthly"
+	# ],
+}
 
 # Testing
 # -------
@@ -267,6 +267,8 @@ fixtures = [
 				"in",
 				(
 					"Company-custom_bcn_default_contribution_expense_account",		
+                    "Company-custom_section_break_gnrar",
+                    "Company-custom_bcn_ssc_registration_no",
                     			
 					"Employee Tax Exemption Declaration-custom_bcn_from_date",
 					"Employee Tax Exemption Proof Submission-custom_bcn_from_date",                
@@ -286,7 +288,7 @@ fixtures = [
                     "Salary Structure-custom_bcn_contributions_detail_section",
                     "Salary Structure-custom_bcn_contributions",
                     "Salary Structure-custom_bcn_total_contribution", 
-                                        
+                                                            
 					"Salary Structure Assignment-custom_bcn_exempted_from_income_tax_till_date",
                                       
 					"Payroll Entry-custom_bcn_contribution_expense_account",   
