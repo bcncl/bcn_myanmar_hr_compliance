@@ -319,8 +319,8 @@ fixtures = [
 				"name",
 				"in",
 				(
-					"SSC 2%",
-					"SSC 2.5%",
+					"SSC 2% (EE)",
+					"SSC 2.5% (EE)",
 					"SSC 1% (ER)",
 					"SSC 2% (ER)",
 					"SSC 2.5% (ER)",
@@ -336,6 +336,7 @@ fixtures = [
 				"in",
 				(
 					"Salary Component-type-options",
+                    "Salary Structure Assignment-main-field_order"
                     # "Salary Structure Assignment-taxable_earnings_till_date-allow_on_submit",
                     # "Salary Structure Assignment-tax_deducted_till_date-allow_on_submit"
 				)
