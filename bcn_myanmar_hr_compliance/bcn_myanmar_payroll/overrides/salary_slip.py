@@ -24,8 +24,8 @@ class BCNSalarySlip(SalarySlip):
 			},
 			pluck = "name"
 		)
-		# if len(drafting_slip) > 0:
-		# 	frappe.throw("Please submit the draft salary slip for last month first.")
+		if len(drafting_slip) > 0:
+			frappe.throw("Please submit the draft salary slip for last month first.")
 
 	def compute_income_tax_breakup(self):
 		if not self.payroll_period:
