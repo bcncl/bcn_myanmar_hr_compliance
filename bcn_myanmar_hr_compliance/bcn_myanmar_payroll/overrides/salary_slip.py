@@ -11,13 +11,14 @@ from frappe.query_builder.functions import Count, Sum
 class BCNSalarySlip(SalarySlip):
 	def before_save(self):		
 		self.check_draft_status_slip()
-
+		
 	def check_draft_status_slip(self):
 		drafting_slip = frappe.db.get_list("Salary Slip", 
 			filters = {	
 				"docstatus": 0,
 				"name": ["!=", self.name],
 				"posting_date": ["<", self.posting_date],
+				"employee": self.employee
 			},
 			or_filters = {
 				"posting_date": ["between", [self.payroll_period.start_date, self.payroll_period.end_date]],
