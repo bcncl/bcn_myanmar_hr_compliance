@@ -2,13 +2,31 @@
 # License: MIT. See license.txt
 
 import frappe
-from frappe import _, bold
-from frappe.utils import flt, ceil, get_link_to_form
+from frappe import _
+from frappe.utils import flt, ceil
 from hrms.payroll.doctype.salary_slip.salary_slip import SalarySlip
 from hrms.payroll.utils import sanitize_expression
 from frappe.query_builder.functions import Count, Sum
 
 class BCNSalarySlip(SalarySlip):
+	def before_save(self):		
+		self.check_draft_status_slip()
+
+	def check_draft_status_slip(self):
+		drafting_slip = frappe.db.get_list("Salary Slip", 
+			filters = {	
+				"docstatus": 0,
+				"name": ["!=", self.name],
+				"posting_date": ["<", self.posting_date],
+			},
+			or_filters = {
+				"posting_date": ["between", [self.payroll_period.start_date, self.payroll_period.end_date]],
+			},
+			pluck = "name"
+		)
+		if len(drafting_slip) > 0:
+			frappe.throw("Please submit the draft salary slip for last month first.")
+
 	def compute_income_tax_breakup(self):
 		if not self.payroll_period:
 			return
@@ -33,7 +51,11 @@ class BCNSalarySlip(SalarySlip):
 			self.custom_bcn_myanmar_pit_applied = self.tax_slab.custom_bcn_is_myanmar_pit_compliance
 
 			if self.tax_slab.allow_tax_exemption:
-				self.standard_tax_exemption_amount = self.tax_slab.standard_tax_exemption_amount
+				if self.total_earnings > self.standard_tax_exemption_amount:
+					self.standard_tax_exemption_amount = self.tax_slab.standard_tax_exemption_amount
+				else:
+					self.standard_tax_exemption_amount = 0
+
 				self.deductions_before_tax_calculation = (
 					self.compute_annual_deductions_before_tax_calculation()
 				)
@@ -78,7 +100,9 @@ class BCNSalarySlip(SalarySlip):
 		if self.custom_bcn_myanmar_pit_applied:
 			if self.total_earnings > self.standard_tax_exemption_amount:				
 				basic_relief = self.total_earnings * 0.2
-				self.standard_tax_exemption_amount = basic_relief if basic_relief < 10000000 else 10000000		
+				self.standard_tax_exemption_amount = basic_relief if basic_relief < 10000000 else 10000000	
+			else:
+				self.standard_tax_exemption_amount = 0	
 
 			# ATTENTATION: reset minus value to 0
 			if self.annual_taxable_amount < 0.0:
@@ -119,14 +143,13 @@ class BCNSalarySlip(SalarySlip):
 				if declaration:
 					total_exemption_amount = declaration[0]
 			
-
 		if self.tax_slab.standard_tax_exemption_amount:			
 			if self.custom_bcn_myanmar_pit_applied and self.total_earnings and self.standard_tax_exemption_amount:
-				if self.total_earnings <= self.standard_tax_exemption_amount:
-					total_exemption_amount += flt(self.standard_tax_exemption_amount)
-				else:
+				if self.total_earnings > self.standard_tax_exemption_amount:
 					basic_relief = self.total_earnings * 0.2
 					self.standard_tax_exemption_amount = basic_relief if basic_relief < 10000000 else 10000000
+					total_exemption_amount += flt(self.standard_tax_exemption_amount)
+				else:
 					total_exemption_amount += flt(self.standard_tax_exemption_amount)
 			else:
 				total_exemption_amount += flt(self.standard_tax_exemption_amount)	
@@ -171,15 +194,117 @@ class BCNSalarySlip(SalarySlip):
 		if not getattr(self, "_salary_structure_doc", None):
 			self.set_salary_structure_doc()
 
-		self.add_structure_components(component_type)
-		self.add_additional_salary_components(component_type)
+		self.add_structure_components(component_type)			
 		if component_type == "earnings":
+			self.add_additional_salary_components(component_type)
 			self.add_employee_benefits()
-		elif component_type == "deductions":
+		elif component_type == "deductions":	
+			self.add_additional_salary_components(component_type)		
 			self.add_tax_components()
 		else: 
+			component_type = "custom_bcn_contributions"
+			self.add_additional_salary_contribution_components(component_type)
 			self.add_employer_contributions()
-			
+	
+	def add_additional_salary_contribution_components(self, component_type):		
+		additional_salaries = self.get_contribution_additional_salaries(
+			self.employee, self.start_date, self.end_date, component_type
+		)	
+		
+		for additional_salary in additional_salaries:
+			self.update_component_row(
+				self.get_salary_component_data(additional_salary.component),
+				additional_salary.amount,
+				component_type,
+				additional_salary,
+			)
+
+	def get_salary_component_data(self, component):
+		# get_cached_value doesn't work here due to alias "name as salary_component"
+		return frappe.db.get_value(
+			"Salary Component",
+			component,
+			(
+				"name as salary_component",
+				"depends_on_payment_days",
+				"salary_component_abbr as abbr",
+				"do_not_include_in_total",
+				"is_tax_applicable",
+				"is_flexible_benefit",
+				"variable_based_on_taxable_salary",
+			),
+			as_dict=1,
+			cache=True,
+		)
+	
+	def get_contribution_additional_salaries(self, employee, start_date, end_date, component_type):		
+		from frappe.query_builder import Criterion  
+		
+		if component_type == "custom_bcn_contributions":
+			comp_type = "Contribution" 
+
+			additional_sal = frappe.qb.DocType("Additional Salary")
+			component_field = additional_sal.salary_component.as_("component")
+			overwrite_field = additional_sal.overwrite_salary_structure_amount.as_("overwrite")
+
+			additional_salary_list = (
+				frappe.qb.from_(additional_sal)
+				.select(
+					additional_sal.name,
+					component_field,
+					additional_sal.type,
+					additional_sal.amount,
+					additional_sal.is_recurring,
+					overwrite_field,
+					additional_sal.deduct_full_tax_on_selected_payroll_date,
+				)
+				.where(
+					(additional_sal.employee == employee)
+					& (additional_sal.docstatus == 1)
+					& (additional_sal.type == comp_type)
+					& (additional_sal.disabled == 0)
+				)
+				.where(
+					Criterion.any(
+						[
+							Criterion.all(
+								[  # is recurring and additional salary dates fall within the payroll period
+									additional_sal.is_recurring == 1,
+									additional_sal.from_date <= end_date,
+									additional_sal.to_date >= end_date,
+								]
+							),
+							Criterion.all(
+								[  # is not recurring and additional salary's payroll date falls within the payroll period
+									additional_sal.is_recurring == 0,
+									additional_sal.payroll_date[start_date:end_date],
+								]
+							),
+						]
+					)
+				)
+				.run(as_dict=True)
+			)
+
+			additional_salaries = []
+			components_to_overwrite = []
+
+			for d in additional_salary_list:
+				if d.overwrite:
+					if d.component in components_to_overwrite:
+						frappe.throw(
+						_(
+						"Multiple Additional Salaries with overwrite property exist for Salary Component {0} between {1} and {2}."
+						).format(frappe.bold(d.component), start_date, end_date),
+						title=_("Error"),
+						)
+
+					components_to_overwrite.append(d.component)
+
+				additional_salaries.append(d)
+
+			return additional_salaries
+		
 	def add_employer_contributions(self):
 		self.previous_contributions = self.get_contribution_details(
 			self.payroll_period.start_date, self.start_date
@@ -291,3 +416,4 @@ class BCNSalarySlip(SalarySlip):
 			# frappe.throw(f'Here: {self._opening_salary_structure_assignment}')
 			# frappe.throw('foo')
 		return self._opening_salary_structure_assignment.get(field_to_select) or 0
+	

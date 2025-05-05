@@ -13,6 +13,11 @@ from frappe.utils import (
 
 from hrms.hr.utils import (DuplicateDeclarationError)	
 
+def validate_exemption_from_date(from_date, payroll_period):
+	start_date, end_date = frappe.get_cached_value("Payroll Period", payroll_period, ["start_date", "end_date"])
+	if not (getdate(start_date) <= getdate(from_date) <= getdate(end_date)):
+		frappe.throw(f"The `From date` must be between the start date and end date of the payroll period.")
+
 def validate_duplicate_exemption_for_payroll_period(doctype, docname, payroll_period, from_date, employee):
 	start_date = getdate(get_first_day(from_date))
 	end_date = getdate(get_last_day(from_date))
