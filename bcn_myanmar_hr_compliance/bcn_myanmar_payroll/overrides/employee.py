@@ -21,11 +21,14 @@ class BCNEmployee(EmployeeMaster):
 		self.validate_employee_hscisc()
 
 	def validate_employee_hscisc(self):
-		age = (month_diff(getdate(nowdate()), getdate(self.date_of_birth))) /12
+		if self.custom_bcn_enable_ssc:
+			age = (month_diff(getdate(nowdate()), getdate(self.date_of_birth))) /12
 
-		if age <= 60:
-			if self.custom_bcn_ssc_hscis_category != "60yrs old and under":
-				frappe.throw(f"Employee {self.employee_name} must be selected `60yrs old and under`")
+			if age <= 60:
+				if self.custom_bcn_ssc_hscis_category != "60yrs old and under":
+					frappe.throw(f"Employee {self.employee_name} must be selected `60yrs old and under`")
+			else:
+				if self.custom_bcn_ssc_hscis_category != "Over 60yrs old":
+					frappe.throw(f"Employee {frappe.bold(self.employee_name)} must be selected `Over 60yrs old`")
 		else:
-			if self.custom_bcn_ssc_hscis_category != "Over 60yrs old":
-				frappe.throw(f"Employee {frappe.bold(self.employee_name)} must be selected `Over 60yrs old`")
+			self.custom_bcn_ssc_hscis_category = None
