@@ -328,6 +328,7 @@ fixtures = [
 			]
 		],
 	},
+    
     {
 		"doctype": "Property Setter",
 		"filters": [
