@@ -52,10 +52,12 @@ class BCNSalarySlip(SalarySlip):
 			self.custom_bcn_myanmar_pit_applied = self.tax_slab.custom_bcn_is_myanmar_pit_compliance
 
 			if self.tax_slab.allow_tax_exemption:
-				if self.total_earnings > self.standard_tax_exemption_amount:
-					self.standard_tax_exemption_amount = self.tax_slab.standard_tax_exemption_amount
-				else:
-					self.standard_tax_exemption_amount = 0
+				# if self.total_earnings > self.standard_tax_exemption_amount:
+				# 	self.standard_tax_exemption_amount = self.tax_slab.standard_tax_exemption_amount
+				# else:
+				# 	self.standard_tax_exemption_amount = 0
+
+				self.standard_tax_exemption_amount = self.tax_slab.standard_tax_exemption_amount
 
 				self.deductions_before_tax_calculation = (
 					self.compute_annual_deductions_before_tax_calculation()
@@ -102,9 +104,7 @@ class BCNSalarySlip(SalarySlip):
 			if self.total_earnings > self.standard_tax_exemption_amount:				
 				basic_relief = self.total_earnings * 0.2
 				self.standard_tax_exemption_amount = basic_relief if basic_relief < 10000000 else 10000000	
-			else:
-				self.standard_tax_exemption_amount = 0	
-
+			
 			# ATTENTATION: reset minus value to 0
 			if self.annual_taxable_amount < 0.0:
 				self.annual_taxable_amount = 0.0
@@ -149,11 +149,9 @@ class BCNSalarySlip(SalarySlip):
 				if self.total_earnings > self.standard_tax_exemption_amount:
 					basic_relief = self.total_earnings * 0.2
 					self.standard_tax_exemption_amount = basic_relief if basic_relief < 10000000 else 10000000
-					total_exemption_amount += flt(self.standard_tax_exemption_amount)
-				else:
-					total_exemption_amount += flt(self.standard_tax_exemption_amount)
-			else:
-				total_exemption_amount += flt(self.standard_tax_exemption_amount)	
+				total_exemption_amount = flt(self.standard_tax_exemption_amount)				
+			# else:
+			# 	total_exemption_amount += flt(self.standard_tax_exemption_amount)	
 		
 		return total_exemption_amount
 	
