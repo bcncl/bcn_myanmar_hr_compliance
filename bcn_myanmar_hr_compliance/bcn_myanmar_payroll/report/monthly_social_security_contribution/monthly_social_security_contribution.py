@@ -190,7 +190,8 @@ def get_salary_slip(filters):
 			"posting_date",
 			"employee_name",
 			"gross_pay",
-		]
+		],
+		order_by = "employee"
 	)
 
 	return salaries
