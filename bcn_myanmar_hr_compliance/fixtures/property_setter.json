@@ -14,5 +14,21 @@
   "property_type": "Select",
   "row_name": null,
   "value": "Earning\nDeduction\nContribution"
+ },
+ {
+  "default_value": null,
+  "doc_type": "Salary Structure Assignment",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocType",
+  "field_name": null,
+  "is_system_generated": 0,
+  "modified": "2025-05-02 16:59:31.611288",
+  "module": null,
+  "name": "Salary Structure Assignment-main-field_order",
+  "property": "field_order",
+  "property_type": "Data",
+  "row_name": null,
+  "value": "[\"employee\", \"employee_name\", \"department\", \"designation\", \"grade\", \"column_break_6\", \"salary_structure\", \"from_date\", \"income_tax_slab\", \"column_break_11\", \"company\", \"payroll_payable_account\", \"currency\", \"section_break_7\", \"base\", \"column_break_9\", \"variable\", \"amended_from\", \"opening_balances_section\", \"taxable_earnings_till_date\", \"column_break_20\", \"tax_deducted_till_date\", \"custom_bcn_exempted_from_income_tax_till_date\", \"section_break_17\", \"payroll_cost_centers\"]"
  }
 ]
