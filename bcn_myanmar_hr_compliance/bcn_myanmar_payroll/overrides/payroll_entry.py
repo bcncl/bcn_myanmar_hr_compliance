@@ -12,12 +12,16 @@ import erpnext
 from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import (
 	get_accounting_dimensions,
 )
+from frappe.query_builder.functions import Coalesce, Count
+from collections import defaultdict
 
 class BCNPayrollEntry(PayrollEntry):
 	@frappe.whitelist()
 	def submit_salary_slips(self):
 		self.validate_contirbution_expense_account()
 		super(BCNPayrollEntry, self).submit_salary_slips()
+
+		self.create_er_contribution_journal_entry()
 	
 	def validate_contirbution_expense_account(self):	
 		salary_slip_list = frappe.get_list("Salary Slip",
@@ -41,7 +45,7 @@ class BCNPayrollEntry(PayrollEntry):
 		if contribution_component_count[0][0] > 0 and not self.custom_bcn_contribution_expense_account:
 			frappe.throw(f"""Contribution expense account must be set on `Payroll Entry` 
 				for salary slip which includes `Contribution Component`.""")
-
+	
 	def make_accrual_jv_entry(self, submitted_salary_slips):			
 		self.check_permission("write")
 		employee_wise_accounting_enabled = frappe.db.get_single_value(
@@ -146,7 +150,7 @@ class BCNPayrollEntry(PayrollEntry):
 				submit_journal_entry=True,
 				submitted_salary_slips=submitted_salary_slips,
 			)
-
+		
 	def get_contribution_component_total(
 		self,
 		component_type=None,
@@ -227,3 +231,90 @@ class BCNPayrollEntry(PayrollEntry):
 				accounts=accounts,
 			)	
 		return contribution_amount * -1
+
+	def create_er_contribution_journal_entry(self):		
+		ss = frappe.qb.DocType("Salary Slip")
+		sscd = frappe.qb.DocType("BCN Contribution Detail")
+		salary_slips = (
+			frappe.qb.from_(ss)
+			.select(ss.name, ss.custom_bcn_total_contribution, sscd.salary_component, sscd.amount)
+			.join(sscd)
+			.on(ss.name == sscd.parent)
+			.where(
+				(ss.docstatus == 1)
+				& (ss.start_date >= self.start_date)
+				& (ss.end_date <= self.end_date)
+				& (ss.payroll_entry == self.name)
+			)
+		).run(as_dict=True)
+		
+		payable_account_details = {}
+		ssb_components = []
+		unique_contribution_amount = {}
+		for slip in salary_slips:						
+			if not slip.salary_component in ssb_components:	
+				ssb_components.append(slip.salary_component)
+			payable_account_details[(slip.name, slip.salary_component)] = slip
+
+			unique_contribution_amount[slip['name']] = slip['custom_bcn_total_contribution']
+		
+		component_details = frappe.db.get_all("Salary Component Account", 
+			filters={
+				"company": self.company,
+				"parent": ["In", ssb_components]
+			},
+			fields=["parent", "account"]
+		)
+
+		component_details_map = {component.parent: component.account for component in component_details}
+		
+		for slip in salary_slips:
+			payable_account_details_map = payable_account_details.get((slip.name, slip.salary_component))
+			account = component_details_map.get(slip.salary_component)
+			payable_account_details_map["account"] = account	
+		
+		total_contribution_amount = sum(unique_contribution_amount.values())
+
+		ssb_details = defaultdict(float)
+		for entry in payable_account_details.values():
+			ssb_details[entry['account']] += entry['amount']
+
+		""" Get and Validate Contribution Expense Account """
+		contribution_expense_account = self.custom_bcn_contribution_expense_account
+		if not contribution_expense_account:
+			contribution_expense_account = frappe.db.get_value("Company", self.company, "custom_bcn_default_contribution_expense_account")
+
+		if not contribution_expense_account:
+			frappe.throw(f"The Contribution Expense Account is required. Please configure it in either the {frappe.bold('Payroll Entry')} or the {frappe.bold('Company')}")
+		
+		company_currency = erpnext.get_company_currency(self.company)
+
+		""" Create Contributon Journal Entry """
+		je = frappe.new_doc("Journal Entry")
+		je.posting_date = self.posting_date
+		je.company = self.company
+		je.voucher_type = "Journal Entry"
+		je.user_remark = f"Journal Entry for Salary Slip {frappe.bold(self.name)}"
+		je.remark = f"Note: Journal Entry for Salary Slip {frappe.bold(self.name)}"	
+		je.multi_currency = 1 if self.currency != company_currency else 0
+
+		je.append("accounts", {
+			"account": contribution_expense_account,
+			"debit_in_account_currency": total_contribution_amount,
+			"credit_in_account_currency": 0.0,
+			"reference_type": "Payroll Entry",
+			"reference_name": self.name
+		})
+
+		for ssb_account in dict(ssb_details).keys():
+			ssb_amount = dict(ssb_details).get(ssb_account)
+			je.append("accounts", {
+				"account": ssb_account,
+				"debit_in_account_currency": 0.0,
+				"credit_in_account_currency": ssb_amount,
+				"reference_type": "Payroll Entry",
+				"reference_name": self.name
+			})	
+	
+		je.save()
+		je.submit()
