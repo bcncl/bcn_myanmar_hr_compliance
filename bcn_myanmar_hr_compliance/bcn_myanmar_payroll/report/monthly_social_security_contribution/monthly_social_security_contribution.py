@@ -175,6 +175,7 @@ def get_salary_slip(filters):
 
 	salary_filters = {
 		"docstatus": 1,
+		"custom_bcn_myanmar_ssc_applied": 1,
 		"company": filters.company,
 		"posting_date": ["Between", [from_date, upto_date]]
 	}
