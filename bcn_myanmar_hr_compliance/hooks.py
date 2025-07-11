@@ -47,7 +47,8 @@ doctype_js = {
 	"Salary Component" : "public/js/hrms/salary_component.js",
 	"Salary Structure" : "public/js/hrms/salary_structure.js",
 	"Salary Slip": "public/js/hrms/salary_slip.js",
-	"Payroll Entry": "public/js/hrms/payroll_entry.js"
+	"Payroll Entry": "public/js/hrms/payroll_entry.js",
+    "Employee": "public/js/hrms/employee.js"
 }
 
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
