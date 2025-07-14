@@ -278,6 +278,7 @@ fixtures = [
 					"Employee-custom_bcn_enable_ssc",
                     "Employee-custom_bcn_ssc_registration_no",
 					"Employee-custom_bcn_ssc_hscis_category", 
+                    "Employee-custom_bcn_employee_name_mm",
                     
 					"Income Tax Slab-custom_bcn_is_myanmar_pit_compliance",
                     

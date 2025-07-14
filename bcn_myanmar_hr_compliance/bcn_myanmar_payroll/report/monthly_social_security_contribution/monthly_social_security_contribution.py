@@ -55,6 +55,7 @@ def execute(filters=None):
 		deduction = deductions.get(slip.name)
 
 		employee_salary.setdefault("employee", employee.name)	
+		employee_salary.setdefault("employee_name", employee.custom_bcn_employee_name_mm or employee.employee_name)	
 		employee_salary.setdefault("ssn_no", employee.custom_bcn_ssc_registration_no)
 		employee_salary.setdefault("gender", employee.gender)
 		employee_salary.setdefault("payment", 300000 if slip.gross_pay > 300000 else slip.gross_pay)
@@ -189,8 +190,7 @@ def get_salary_slip(filters):
 			"name",
 			"employee",
 			"posting_date",
-			"employee_name",
-			"gross_pay",
+			"gross_pay"
 		],
 		order_by = "employee"
 	)
@@ -205,6 +205,7 @@ def get_employee(filters, employee_list):
 		fields=[
 			"name",
 			"employee_name",
+			"custom_bcn_employee_name_mm",
 			"gender",			
 			"custom_bcn_enable_ssc",
 			"custom_bcn_ssc_registration_no"
