@@ -297,6 +297,7 @@ class BCNPayrollEntry(PayrollEntry):
 			if not contribution_expense_account:
 				frappe.throw(f"The Contribution Expense Account is required. Please configure it in either the {frappe.bold('Payroll Entry')} or the {frappe.bold('Company')}")
 			
+			cost_center = self.cost_center or frappe.db.get_value("Company", self.company, "cost_center")
 			company_currency = erpnext.get_company_currency(self.company)
 			message = f"Contribution Expense Journal Entry for salaries from {bold(formatdate(self.start_date, 'dd/MM/yyyy'))} to {bold(formatdate(self.end_date, 'dd/MM/yyyy'))}"
 
@@ -314,6 +315,7 @@ class BCNPayrollEntry(PayrollEntry):
 
 			je.append("accounts", {
 				"account": contribution_expense_account,
+				"cost_center": cost_center,
 				"debit_in_account_currency": total_contribution_amount,
 				"credit_in_account_currency": 0.0,
 				"reference_type": "Payroll Entry",
@@ -328,6 +330,7 @@ class BCNPayrollEntry(PayrollEntry):
 
 				je.append("accounts", {
 					"account": ssb_account,
+					"cost_center": cost_center,
 					"debit_in_account_currency": 0.0,
 					"credit_in_account_currency": ssb_amount,
 					"reference_type": "Payroll Entry",
