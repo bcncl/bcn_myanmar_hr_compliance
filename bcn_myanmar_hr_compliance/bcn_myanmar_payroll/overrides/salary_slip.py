@@ -204,7 +204,7 @@ class BCNSalarySlip(SalarySlip):
 			component_type = "custom_bcn_contributions"
 			self.add_additional_salary_contribution_components(component_type)
 			self.add_employer_contributions()
-	
+		
 	def add_additional_salary_contribution_components(self, component_type):		
 		additional_salaries = self.get_contribution_additional_salaries(
 			self.employee, self.start_date, self.end_date, component_type
@@ -305,10 +305,11 @@ class BCNSalarySlip(SalarySlip):
 			return additional_salaries
 		
 	def add_employer_contributions(self):
-		self.previous_contributions = self.get_contribution_details(
+		opening_contribution = self.get_opening_contributed_amount()
+
+		self.previous_contributions = opening_contribution + self.get_contribution_details(
 			self.payroll_period.start_date, self.start_date
-		)
-		
+		)		
 		self.current_month_structured_contribution = 0.0
 		self.one_time_contribution = 0.0
 		for contribution in  self.custom_bcn_contributions:
@@ -328,6 +329,9 @@ class BCNSalarySlip(SalarySlip):
 
 		return self.previous_contributions, self.current_month_structured_contribution, self.future_structured_contributions
 	
+	def get_opening_contributed_amount(self):
+		return self.get_opening_for("custom_bcn_contributed_amount_till_date", self.payroll_period.start_date, self.end_date) or 0
+
 	def get_contribution_details(
 		self,
 		start_date,
@@ -361,7 +365,7 @@ class BCNSalarySlip(SalarySlip):
 
 		return flt(result[0][0]) if result else 0.0
 
-	def compute_total_contributions(self):
+	def compute_total_contributions(self):		
 		if hasattr(self, "previous_contributions"):
 			return (
 				self.previous_contributions

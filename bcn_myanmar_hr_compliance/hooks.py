@@ -292,6 +292,8 @@ fixtures = [
                     "Salary Structure-custom_bcn_total_contribution", 
                                                             
 					"Salary Structure Assignment-custom_bcn_exempted_from_income_tax_till_date",
+                    "Salary Structure Assignment-custom_section_break_iup4j",
+                    "Salary Structure Assignment-custom_bcn_contributed_amount_till_date",
                                       
 					"Payroll Entry-custom_bcn_contribution_expense_account",   
                                      
@@ -339,9 +341,9 @@ fixtures = [
 				"in",
 				(
 					"Salary Component-type-options",
+                    "Salary Structure Assignment-main-field_order",
+                    "Salary Structure Assignment-section_break_17-description",
                     "Salary Structure Assignment-main-field_order"
-                    # "Salary Structure Assignment-taxable_earnings_till_date-allow_on_submit",
-                    # "Salary Structure Assignment-tax_deducted_till_date-allow_on_submit"
 				)
 			]
 		]
