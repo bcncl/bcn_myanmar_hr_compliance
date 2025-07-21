@@ -21,8 +21,6 @@ class BCNPayrollEntry(PayrollEntry):
 	def submit_salary_slips(self):
 		self.validate_contirbution_expense_account()
 		super(BCNPayrollEntry, self).submit_salary_slips()
-
-		self.create_er_contribution_journal_entry()
 	
 	def validate_contirbution_expense_account(self):	
 		salary_slip_list = frappe.get_list("Salary Slip",
@@ -151,6 +149,8 @@ class BCNPayrollEntry(PayrollEntry):
 				submit_journal_entry=True,
 				submitted_salary_slips=submitted_salary_slips,
 			)
+
+			self.create_er_contribution_journal_entry()
 		
 	def get_contribution_component_total(
 		self,
@@ -247,7 +247,7 @@ class BCNPayrollEntry(PayrollEntry):
 			.join(sscd)
 			.on(ss.name == sscd.parent)
 			.where(
-				(ss.docstatus == 1)
+				(ss.docstatus == 1) 
 				& (ss.custom_bcn_myanmar_ssc_applied == 1)
 				& (ss.start_date >= self.start_date)
 				& (ss.end_date <= self.end_date)
@@ -259,6 +259,7 @@ class BCNPayrollEntry(PayrollEntry):
 		ssb_components = []
 		unique_contribution_amount = {}
 
+		# frappe.throw(f'HERE: {salary_slips}')
 		if len(salary_slips) > 0:
 
 			for slip in salary_slips:						
