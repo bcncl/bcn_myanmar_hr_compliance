@@ -149,9 +149,7 @@ class BCNSalarySlip(SalarySlip):
 				if self.total_earnings > self.standard_tax_exemption_amount:
 					basic_relief = self.total_earnings * 0.2
 					self.standard_tax_exemption_amount = basic_relief if basic_relief < 10000000 else 10000000
-				total_exemption_amount = flt(self.standard_tax_exemption_amount)				
-			# else:
-			# 	total_exemption_amount += flt(self.standard_tax_exemption_amount)	
+				total_exemption_amount += flt(self.standard_tax_exemption_amount)				
 		
 		return total_exemption_amount
 	
