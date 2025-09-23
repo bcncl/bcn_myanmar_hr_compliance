@@ -90,7 +90,7 @@ doctype_js = {
 # ------------
 
 # before_install = "bcn_myanmar_hr_compliance.install.before_install"
-# after_install = "bcn_myanmar_hr_compliance.install.after_install"
+after_install = "bcn_myanmar_hr_compliance.install.after_install"
 
 # Uninstallation
 # ------------
@@ -315,37 +315,5 @@ fixtures = [
 				)
 			]
 		],
-	},
-    {
-		"doctype": "Salary Component",
-		"filters": [
-			[
-				"name",
-				"in",
-				(
-					"SSC 2% (EE)",
-					"SSC 2.5% (EE)",
-					"SSC 1% (ER)",
-					"SSC 2% (ER)",
-					"SSC 2.5% (ER)",
-				)
-			]
-		],
-	},
-    
-    {
-		"doctype": "Property Setter",
-		"filters": [
-			[
-				"name",
-				"in",
-				(
-					"Salary Component-type-options",
-                    "Salary Structure Assignment-main-field_order",
-                    "Salary Structure Assignment-section_break_17-description",
-                    "Salary Structure Assignment-main-field_order"
-				)
-			]
-		]
-	}
+	}    
 ]
