@@ -239,6 +239,7 @@ def get_salary_deductions_detail(salary_name_list):
 
 def get_contribution_detail(salary_name_list):
 	
+	# Hello Testing
 	contribution_detail = frappe.db.get_all("BCN Contribution Detail", 
 		filters = {
 			"parent": ["In", salary_name_list]
