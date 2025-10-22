@@ -238,6 +238,8 @@ def get_salary_deductions_detail(salary_name_list):
 	return {detail.parent: detail for detail in salary_detail}
 
 def get_contribution_detail(salary_name_list):
+	
+	# Hello Testing
 	contribution_detail = frappe.db.get_all("BCN Contribution Detail", 
 		filters = {
 			"parent": ["In", salary_name_list]
@@ -249,5 +251,9 @@ def get_contribution_detail(salary_name_list):
 			"amount"
 		]
 	)
-
-	return {contribution.name: contribution for contribution in contribution_detail}
+	if contribution_detail:
+		contribution_detail_map = {contribution.name: contribution for contribution in contribution_detail}
+		
+		return contribution_detail_map
+	
+	return {}
