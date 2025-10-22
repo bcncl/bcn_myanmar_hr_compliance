@@ -315,21 +315,5 @@ fixtures = [
 				)
 			]
 		],
-	},
-    
-    {
-		"doctype": "Property Setter",
-		"filters": [
-			[
-				"name",
-				"in",
-				(
-					"Salary Component-type-options",
-                    "Salary Structure Assignment-main-field_order",
-                    "Salary Structure Assignment-section_break_17-description",
-                    "Salary Structure Assignment-main-field_order"
-				)
-			]
-		]
 	}
 ]
