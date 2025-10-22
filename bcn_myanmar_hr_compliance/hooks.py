@@ -1,9 +1,9 @@
 app_name = "bcn_myanmar_hr_compliance"
-app_title = "BCN Myanmar HR Compliance"
+app_title = "Myanmar HR Compliance"
 app_publisher = "Business Centric Network Company Limited"
 app_description = "HR Compliance for Myanmar"
 app_email = "info@bcncl.com"
-app_license = "mit"
+app_license = "agpl-3.0"
 
 # Apps
 # ------------------
@@ -267,53 +267,69 @@ fixtures = [
 				"name",
 				"in",
 				(
-					"Company-custom_bcn_default_contribution_expense_account",		
+					"Company-custom_bcn_default_contribution_expense_account",
                     "Company-custom_section_break_gnrar",
                     "Company-custom_bcn_ssc_registration_no",
-                    			
+
 					"Employee Tax Exemption Declaration-custom_bcn_from_date",
-					"Employee Tax Exemption Proof Submission-custom_bcn_from_date",                
+					"Employee Tax Exemption Proof Submission-custom_bcn_from_date",
 					"Employee-custom_bcn_myanmar_compliance_tab",
 					"Employee-custom_bcn_ssb_section",
 					"Employee-custom_bcn_enable_ssc",
                     "Employee-custom_bcn_ssc_registration_no",
-					"Employee-custom_bcn_ssc_hscis_category", 
+					"Employee-custom_bcn_ssc_hscis_category",
                     "Employee-custom_bcn_employee_name_mm",
-                    
+
 					"Income Tax Slab-custom_bcn_is_myanmar_pit_compliance",
-                    
+
                     "Salary Component-custom_bcn_myanmar_compliance_tab",
                     "Salary Component-custom_bcn_is_myanmar_ssc",
                     "Salary Component-custom_bcn_is_one_time_contribution",
-                    
+
                     "Salary Structure-custom_bcn_contributions_tab",
                     "Salary Structure-custom_bcn_contributions_detail_section",
                     "Salary Structure-custom_bcn_contributions",
-                    "Salary Structure-custom_bcn_total_contribution", 
-                                                            
+                    "Salary Structure-custom_bcn_total_contribution",
+
 					"Salary Structure Assignment-custom_bcn_exempted_from_income_tax_till_date",
                     "Salary Structure Assignment-custom_section_break_iup4j",
                     "Salary Structure Assignment-custom_bcn_contributed_amount_till_date",
-                                      
-					"Payroll Entry-custom_bcn_contribution_expense_account",   
-                                     
+
+					"Payroll Entry-custom_bcn_contribution_expense_account",
+
 					"Salary Slip-custom_bcn_contributions_tab",
 					"Salary Slip-custom_bcn_contributions",
 					"Salary Slip-custom_bcn_contributions_column",
 					"Salary Slip-custom_bcn_contributed_amount_till_date",
 					"Salary Slip-custom_bcn_current_month_contribution",
-					"Salary Slip-custom_bcn_future_contribution",                    
+					"Salary Slip-custom_bcn_future_contribution",
 					"Salary Slip-custom_bcn_contributions_totals_section",
-					"Salary Slip-custom_bcn_total_contribution",                    
-					"Salary Slip-custom_bcn_base_total_contribution",		
+					"Salary Slip-custom_bcn_total_contribution",
+					"Salary Slip-custom_bcn_base_total_contribution",
 					"Salary Slip-custom_bcn_total_contributions",
 					"Salary Slip-custom_bcn_myanmar_compliance_tab",
 					"Salary Slip-custom_bcn_myanmar_pit_section",
 					"Salary Slip-custom_bcn_myanmar_pit_applied",
 					"Salary Slip-custom_bcn_myanmar_ssb_section",
-					"Salary Slip-custom_bcn_myanmar_ssc_applied"           
+					"Salary Slip-custom_bcn_myanmar_ssc_applied"
 				)
 			]
 		],
-	}    
+	},
+    
+    {
+		"doctype": "Property Setter",
+		"filters": [
+			[
+				"name",
+				"in",
+				(
+					"Salary Component-type-options",
+                    "Salary Structure Assignment-main-field_order",
+                    "Salary Structure Assignment-section_break_17-description",
+                    "Salary Structure Assignment-main-field_order"
+				)
+			]
+		]
+	}
 ]
