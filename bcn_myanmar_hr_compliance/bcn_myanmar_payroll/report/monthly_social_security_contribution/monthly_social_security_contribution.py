@@ -30,28 +30,28 @@ def execute(filters=None):
 	total_employee_ssc = 0
 	total_employer_ssc = 0
 
-	for contribution in contributions:
+	for contribution in contributions:		
 		contribution_map = contributions.get(contribution)
 		
 		employee_salary = {
-			"employer_ssc": 0,
-			"employer_injury": 0
-		}		
+			"employer_ssc": 0.0,
+			"employer_injury": 0.0
+		}	
 
-		if contribution_map:
+		if contribution_map:				
 			employee_salary = employee_salary_map.get(contribution_map.parent)
-
+			
 			if contribution_map.salary_component in ["SSC 2% (ER)", "SSC 2.5% (ER)"]:
-				employee_salary.setdefault("employer_ssc", contribution_map.amount or 0)	
-				
+				employee_salary.setdefault("employer_ssc", contribution_map.amount or 0.0)	
+			
 			if contribution_map.salary_component == "SSC 1% (ER)":
-				employee_salary.setdefault("employer_injury", contribution_map.amount or 0)	
+				employee_salary.setdefault("employer_injury", contribution_map.amount or 0.0)			
 				
 	
 	for slip in salaries:
 		employee_salary = employee_salary_map.get(slip.name)
 		employee= employee_map.get(slip.employee)
-
+		
 		deduction = deductions.get(slip.name)
 
 		employee_salary.setdefault("employee", employee.name)	
@@ -62,10 +62,14 @@ def execute(filters=None):
 		
 		if deduction:
 			employee_salary.setdefault("employee_ssc", deduction.amount)
-			
+		else:
+			employee_salary.setdefault("employee_ssc", 0.0)				
 
 		total_employee_ssc = slip.employee_ssc or 0.0
-		total_employer_ssc = slip.employer_ssc + slip.employer_injury or 0.0
+		
+		total_employer_ssc = slip.employer_ssc + slip.employer_injury if slip.employer_injury else 0.0
+
+		# frappe.throw(f"here {slip.employer_injury or 0.0}")
 		
 		employee_salary.setdefault("total_employee_ssc", total_employee_ssc)
 		employee_salary.setdefault("total_employer_ssc", total_employer_ssc)
