@@ -1,13 +1,370 @@
-
+from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 from frappe.desk.page.setup_wizard.setup_wizard import make_records
+from hrms.setup import delete_custom_fields
 
 
 def after_install():
-	create_property_setters()
-	create_salary_components()
+    create_custom_fields(get_custom_fields(), ignore_validate=True)
+    create_property_setters()
+    make_fixtures()
+
+
+def before_uninstall():
+    delete_custom_fields(get_custom_fields())
+
+
+def get_custom_fields():
+    return {
+        "Company": [
+            {
+                "fieldname": "custom_bcn_ssc_registration_no",
+                "fieldtype": "Data",
+                "insert_after": "custom_section_break_gnrar",
+                "label": "SSC Registration No",
+                "module": "BCN Myanmar Payroll",
+                "name": "Company-custom_bcn_ssc_registration_no",
+                "no_copy": 1,
+            },
+            {
+                "fieldname": "custom_section_break_gnrar",
+                "fieldtype": "Section Break",
+                "insert_after": "transactions_annual_history",
+                "module": "BCN Myanmar Payroll",
+                "name": "Company-custom_section_break_gnrar",
+            },
+        ],
+        "Employee": [
+            {
+                "fieldname": "custom_bcn_employee_name_mm",
+                "fieldtype": "Data",
+                "insert_after": "employee_name",
+                "label": "Employee Name MM",
+                "module": "BCN Myanmar Payroll",
+                "name": "Employee-custom_bcn_employee_name_mm",
+            },
+            {
+                "fieldname": "custom_bcn_myanmar_compliance_tab",
+                "fieldtype": "Tab Break",
+                "insert_after": "iban",
+                "label": "Myanmar Compliance",
+                "module": "BCN Myanmar Payroll",
+                "name": "Employee-custom_bcn_myanmar_compliance_tab",
+            },
+            {
+                "fieldname": "custom_bcn_ssb_section",
+                "fieldtype": "Section Break",
+                "insert_after": "custom_bcn_myanmar_compliance_tab",
+                "label": "Social Security Board",
+                "module": "BCN Myanmar Payroll",
+                "name": "Employee-custom_bcn_ssb_section",
+            },
+            {
+                "default": "0",
+                "fieldname": "custom_bcn_enable_ssc",
+                "fieldtype": "Check",
+                "insert_after": "custom_bcn_ssb_section",
+                "label": "Enable SSC",
+                "module": "BCN Myanmar Payroll",
+                "name": "Employee-custom_bcn_enable_ssc",
+            },
+            {
+                "depends_on": "custom_bcn_enable_ssc",
+                "fieldname": "custom_bcn_ssc_registration_no",
+                "fieldtype": "Data",
+                "insert_after": "custom_bcn_enable_ssc",
+                "label": "SSC Registration No",
+                "mandatory_depends_on": "custom_bcn_enable_ssc",
+                "module": "BCN Myanmar Payroll",
+                "name": "Employee-custom_bcn_ssc_registration_no",
+            },
+            {
+                "depends_on": "custom_bcn_enable_ssc",
+                "fieldname": "custom_bcn_ssc_hscis_category",
+                "fieldtype": "Select",
+                "insert_after": "custom_bcn_ssc_registration_no",
+                "label": "Health and Social Care Insurance System Category",
+                "mandatory_depends_on": "eval: doc.custom_bcn_enable_ssc",
+                "module": "BCN Myanmar Payroll",
+                "name": "Employee-custom_bcn_ssc_hscis_category",
+                "options": "\n60yrs old and under\nOver 60yrs old",
+            },
+        ],
+        "Employee Tax Exemption Declaration": [
+            {
+                "fieldname": "custom_bcn_from_date",
+                "fieldtype": "Date",
+                "insert_after": "payroll_period",
+                "label": "From Date",
+                "module": "BCN Myanmar Payroll",
+                "name": "Employee Tax Exemption Declaration-custom_bcn_from_date",
+                "reqd": 1,
+            }
+        ],
+        "Employee Tax Exemption Proof Submission": [
+            {
+                "fieldname": "custom_bcn_from_date",
+                "fieldtype": "Date",
+                "insert_after": "payroll_period",
+                "label": "From Date",
+                "module": "BCN Myanmar Payroll",
+                "name": "Employee Tax Exemption Proof Submission-custom_bcn_from_date",
+                "reqd": 1,
+            }
+        ],
+        "Income Tax Slab": [
+            {
+                "fieldname": "custom_bcn_is_myanmar_pit_compliance",
+                "fieldtype": "Check",
+                "insert_after": "allow_tax_exemption",
+                "label": "Is Myanmar PIT Compliance",
+                "module": "BCN Myanmar Payroll",
+                "name": "Income Tax Slab-custom_bcn_is_myanmar_pit_compliance",
+            }
+        ],
+        "Payroll Entry": [
+            {
+                "fieldname": "custom_bcn_contribution_expense_account",
+                "fieldtype": "Link",
+                "insert_after": "payroll_payable_account",
+                "label": "Contribution Expense Account",
+                "module": "BCN Myanmar Payroll",
+                "name": "Payroll Entry-custom_bcn_contribution_expense_account",
+                "options": "Account",
+            }
+        ],
+        "Salary Component": [
+            {
+                "fieldname": "custom_bcn_myanmar_compliance_tab",
+                "fieldtype": "Tab Break",
+                "insert_after": "create_separate_payment_entry_against_benefit_claim",
+                "label": "Myanmar Compliance",
+                "module": "BCN Myanmar Payroll",
+                "name": "Salary Component-custom_bcn_myanmar_compliance_tab",
+            },
+            {
+                "fieldname": "custom_bcn_is_myanmar_ssc",
+                "fieldtype": "Check",
+                "insert_after": "custom_bcn_myanmar_compliance_tab",
+                "label": "Is Myanmar SSC",
+                "module": "BCN Myanmar Payroll",
+                "name": "Salary Component-custom_bcn_is_myanmar_ssc",
+            },
+            {
+                "depends_on": "eval: !doc.custom_bcn_is_myanmar_ssc",
+                "fieldname": "custom_bcn_is_one_time_contribution",
+                "fieldtype": "Check",
+                "insert_after": "remove_if_zero_valued",
+                "label": "Is One Time Contribution",
+                "module": "BCN Myanmar Payroll",
+                "name": "Salary Component-custom_bcn_is_one_time_contribution",
+            },
+        ],
+        "Salary Structure": [
+            {
+                "fieldname": "custom_bcn_contributions_tab",
+                "fieldtype": "Tab Break",
+                "insert_after": "net_pay",
+                "label": "Contributions",
+                "module": "BCN Myanmar Payroll",
+                "name": "Salary Structure-custom_bcn_contributions_tab",
+            },
+            {
+                "fieldname": "custom_bcn_contributions",
+                "fieldtype": "Table",
+                "insert_after": "custom_bcn_contributions_tab",
+                "label": "Contributions",
+                "module": "BCN Myanmar Payroll",
+                "name": "Salary Structure-custom_bcn_contributions",
+                "options": "BCN Contribution Detail",
+            },
+            {
+                "fieldname": "custom_bcn_contributions_detail_section",
+                "fieldtype": "Section Break",
+                "insert_after": "custom_bcn_contributions",
+                "module": "BCN Myanmar Payroll",
+                "name": "Salary Structure-custom_bcn_contributions_detail_section",
+            },
+            {
+                "fieldname": "custom_bcn_total_contribution",
+                "fieldtype": "Currency",
+                "hidden": 1,
+                "insert_after": "custom_bcn_contributions_detail_section",
+                "label": "Total Contribution",
+                "module": "BCN Myanmar Payroll",
+                "name": "Salary Structure-custom_bcn_total_contribution",
+                "options": "currency",
+                "read_only": 1,
+            },
+        ],
+        "Salary Structure Assignment": [
+            {
+                "allow_on_submit": 1,
+                "fieldname": "custom_bcn_exempted_from_income_tax_till_date",
+                "fieldtype": "Currency",
+                "insert_after": "tax_deducted_till_date",
+                "label": "Exempted From Income Tax Till Date",
+                "module": "BCN Myanmar Payroll",
+                "name": "Salary Structure Assignment-custom_bcn_exempted_from_income_tax_till_date",
+                "options": "currency",
+            },
+            {
+                "description": "Set opening contributions for current company",
+                "fieldname": "custom_section_break_iup4j",
+                "fieldtype": "Section Break",
+                "insert_after": "custom_bcn_exempted_from_income_tax_till_date",
+                "module": "BCN Myanmar Payroll",
+                "name": "Salary Structure Assignment-custom_section_break_iup4j",
+            },
+            {
+                "allow_on_submit": 1,
+                "fieldname": "custom_bcn_contributed_amount_till_date",
+                "fieldtype": "Currency",
+                "insert_after": "custom_section_break_iup4j",
+                "label": "Contributed Amount Till Date",
+                "module": "BCN Myanmar Payroll",
+                "name": "Salary Structure Assignment-custom_bcn_contributed_amount_till_date",
+                "no_copy": 1,
+                "options": "currency",
+            },
+        ],
+        "Salary Slip": [
+            {
+                "fieldname": "custom_bcn_myanmar_compliance_tab",
+                "fieldtype": "Tab Break",
+                "insert_after": "leave_details",
+                "label": "Myanmar Compliance",
+                "module": "BCN Myanmar Payroll",
+                "name": "Salary Slip-custom_bcn_myanmar_compliance_tab",
+            },
+            {
+                "fieldname": "custom_bcn_myanmar_pit_section",
+                "fieldtype": "Section Break",
+                "insert_after": "custom_bcn_myanmar_compliance_tab",
+                "label": "Personal Income Tax",
+                "module": "BCN Myanmar Payroll",
+                "name": "Salary Slip-custom_bcn_myanmar_pit_section",
+            },
+            {
+                "fieldname": "custom_bcn_myanmar_pit_applied",
+                "fieldtype": "Check",
+                "insert_after": "custom_bcn_myanmar_pit_section",
+                "label": "Myanmar PIT Applied",
+                "module": "BCN Myanmar Payroll",
+                "name": "Salary Slip-custom_bcn_myanmar_pit_applied",
+                "read_only": 1,
+            },
+            {
+                "fieldname": "custom_bcn_myanmar_ssb_section",
+                "fieldtype": "Section Break",
+                "insert_after": "custom_bcn_myanmar_pit_applied",
+                "label": "Social Security Board",
+                "module": "BCN Myanmar Payroll",
+                "name": "Salary Slip-custom_bcn_myanmar_ssb_section",
+            },
+            {
+                "fetch_from": "employee.custom_bcn_enable_ssc",
+                "fieldname": "custom_bcn_myanmar_ssc_applied",
+                "fieldtype": "Check",
+                "insert_after": "custom_bcn_myanmar_ssb_section",
+                "label": "Myanmar SSC Applied",
+                "module": "BCN Myanmar Payroll",
+                "name": "Salary Slip-custom_bcn_myanmar_ssc_applied",
+                "read_only": 1,
+            },
+            {
+                "fieldname": "custom_bcn_contributions_tab",
+                "fieldtype": "Tab Break",
+                "insert_after": "base_total_deduction",
+                "label": "Contributions",
+                "module": "BCN Myanmar Payroll",
+                "name": "Salary Slip-custom_bcn_contributions_tab",
+            },
+            {
+                "fieldname": "custom_bcn_contributions",
+                "fieldtype": "Table",
+                "insert_after": "custom_bcn_contributions_tab",
+                "label": "Contributions",
+                "module": "BCN Myanmar Payroll",
+                "name": "Salary Slip-custom_bcn_contributions",
+                "options": "BCN Contribution Detail",
+            },
+            {
+                "fieldname": "custom_bcn_contributions_column",
+                "fieldtype": "Column Break",
+                "insert_after": "custom_bcn_contributions",
+                "module": "BCN Myanmar Payroll",
+                "name": "Salary Slip-custom_bcn_contributions_column",
+            },
+            {
+                "fieldname": "custom_bcn_contributed_amount_till_date",
+                "fieldtype": "Currency",
+                "insert_after": "custom_bcn_contributions_column",
+                "label": "Contributed Amount Till Date",
+                "module": "BCN Myanmar Payroll",
+                "name": "Salary Slip-custom_bcn_contributed_amount_till_date",
+                "read_only": 1,
+            },
+            {
+                "fieldname": "custom_bcn_current_month_contribution",
+                "fieldtype": "Currency",
+                "insert_after": "custom_bcn_contributed_amount_till_date",
+                "label": "Current Month Contribution",
+                "module": "BCN Myanmar Payroll",
+                "name": "Salary Slip-custom_bcn_current_month_contribution",
+                "read_only": 1,
+            },
+            {
+                "fieldname": "custom_bcn_future_contribution",
+                "fieldtype": "Currency",
+                "insert_after": "custom_bcn_current_month_contribution",
+                "label": "Future Contribution",
+                "module": "BCN Myanmar Payroll",
+                "name": "Salary Slip-custom_bcn_future_contribution",
+                "read_only": 1,
+            },
+            {
+                "fieldname": "custom_bcn_contributions_totals_section",
+                "fieldtype": "Section Break",
+                "insert_after": "custom_bcn_future_contribution",
+                "label": "Totals",
+                "module": "BCN Myanmar Payroll",
+                "name": "Salary Slip-custom_bcn_contributions_totals_section",
+            },
+            {
+                "fieldname": "custom_bcn_total_contribution",
+                "fieldtype": "Currency",
+                "insert_after": "custom_bcn_contributions_totals_section",
+                "label": "Total Contribution",
+                "module": "BCN Myanmar Payroll",
+                "name": "Salary Slip-custom_bcn_total_contribution",
+                "options": "currency",
+                "read_only": 1,
+            },
+            {
+                "fieldname": "custom_bcn_base_total_contribution",
+                "fieldtype": "Currency",
+                "insert_after": "custom_bcn_total_contribution",
+                "label": "Total Contribution (Company Currency)",
+                "module": "BCN Myanmar Payroll",
+                "name": "Salary Slip-custom_bcn_base_total_contribution",
+                "options": "Company:company:default_currency",
+                "read_only": 1,
+            },
+            {
+                "fieldname": "custom_bcn_total_contributions",
+                "fieldtype": "Currency",
+                "insert_after": "ctc",
+                "label": "Total Contributions",
+                "module": "BCN Myanmar Payroll",
+                "name": "Salary Slip-custom_bcn_total_contributions",
+                "read_only": 1,
+            },
+        ],
+    }
+
 
 def create_property_setters():
-	records = [
+    records = [
         {
             "doc_type": "Salary Component",
             "doctype": "Property Setter",
@@ -17,7 +374,7 @@ def create_property_setters():
             "name": "Salary Component-type-options",
             "property": "options",
             "property_type": "Select",
-            "value": "Earning\nDeduction\nContribution"
+            "value": "Earning\nDeduction\nContribution",
         },
         {
             "doc_type": "Salary Structure Assignment",
@@ -27,7 +384,7 @@ def create_property_setters():
             "name": "Salary Structure Assignment-main-field_order",
             "property": "field_order",
             "property_type": "Data",
-            "value": "[\"employee\", \"employee_name\", \"department\", \"designation\", \"grade\", \"column_break_6\", \"salary_structure\", \"from_date\", \"income_tax_slab\", \"column_break_11\", \"company\", \"payroll_payable_account\", \"currency\", \"section_break_7\", \"base\", \"column_break_9\", \"variable\", \"amended_from\", \"opening_balances_section\", \"taxable_earnings_till_date\", \"column_break_20\", \"tax_deducted_till_date\", \"custom_bcn_exempted_from_income_tax_till_date\", \"custom_section_break_iup4j\", \"custom_bcn_contributed_amount_till_date\", \"section_break_17\", \"payroll_cost_centers\"]"
+            "value": '["employee", "employee_name", "department", "designation", "grade", "column_break_6", "salary_structure", "from_date", "income_tax_slab", "column_break_11", "company", "payroll_payable_account", "currency", "section_break_7", "base", "column_break_9", "variable", "amended_from", "opening_balances_section", "taxable_earnings_till_date", "column_break_20", "tax_deducted_till_date", "custom_bcn_exempted_from_income_tax_till_date", "custom_section_break_iup4j", "custom_bcn_contributed_amount_till_date", "section_break_17", "payroll_cost_centers"]',
         },
         {
             "doc_type": "Salary Structure Assignment",
@@ -37,168 +394,79 @@ def create_property_setters():
             "name": "Salary Structure Assignment-section_break_17-description",
             "property": "description",
             "property_type": "Text",
-            "value": ""
-        }
+            "value": "",
+        },
     ]
-	make_records(records)
+    make_records(records)
 
-def create_salary_components():
-	records = [
-		{
-            "amount": 0.0,
-            "amount_based_on_formula": 1,
-            "condition": "custom_bcn_enable_ssc and custom_bcn_ssc_hscis_category == \"60yrs old and under\"",
-            "create_separate_payment_entry_against_benefit_claim": 0,
-            "custom_bcn_is_myanmar_ssc": 1,
-            "custom_bcn_is_one_time_contribution": 0,
-            "deduct_full_tax_on_selected_payroll_date": 0,
-            "depends_on_payment_days": 0,
-            "description": "Social Security Contribution 2% by employee",
-            "disabled": 0,
-            "do_not_include_in_total": 0,
-            "docstatus": 0,
+
+def make_fixtures():
+    records = [
+        # Salary Component
+        {
             "doctype": "Salary Component",
+            "amount_based_on_formula": 1,
+            "condition": 'custom_bcn_enable_ssc and custom_bcn_ssc_hscis_category == "60yrs old and under"',
+            "custom_bcn_is_myanmar_ssc": 1,
+            "description": "Social Security Contribution 2% by employee",
             "exempted_from_income_tax": 1,
             "formula": "B * 0.02 if B < 300000 else 6000",
-            "is_flexible_benefit": 0,
-            "is_income_tax_component": 0,
-            "is_tax_applicable": 0,
-            "max_benefit_amount": 0.0,
             "name": "SSC 2% (EE)",
-            "only_tax_impact": 0,
-            "pay_against_benefit_claim": 0,
             "remove_if_zero_valued": 1,
-            "round_to_the_nearest_integer": 0,
             "salary_component": "SSC 2% (EE)",
             "salary_component_abbr": "SSC_20",
-            "statistical_component": 0,
             "type": "Deduction",
-            "variable_based_on_taxable_salary": 0
         },
-		{
-            "amount": 0.0,
-            "amount_based_on_formula": 1,
-            "condition": "custom_bcn_enable_ssc and custom_bcn_ssc_hscis_category == \"60yrs old and under\"",
-            "create_separate_payment_entry_against_benefit_claim": 0,
-            "custom_bcn_is_myanmar_ssc": 1,
-            "custom_bcn_is_one_time_contribution": 0,
-            "deduct_full_tax_on_selected_payroll_date": 0,
-            "depends_on_payment_days": 0,
-            "description": "Social Security Contribution 2% by employer",
-            "disabled": 0,
-            "do_not_include_in_total": 0,
-            "docstatus": 0,
+        {
             "doctype": "Salary Component",
-            "exempted_from_income_tax": 0,
+            "amount_based_on_formula": 1,
+            "condition": 'custom_bcn_enable_ssc and custom_bcn_ssc_hscis_category == "60yrs old and under"',
+            "custom_bcn_is_myanmar_ssc": 1,
+            "description": "Social Security Contribution 2% by employer",
             "formula": "B * 0.02 if B < 300000 else 6000",
-            "is_flexible_benefit": 0,
-            "is_income_tax_component": 0,
-            "is_tax_applicable": 0,
-            "max_benefit_amount": 0.0,
             "name": "SSC 2% (ER)",
-            "only_tax_impact": 0,
-            "pay_against_benefit_claim": 0,
-            "remove_if_zero_valued": 0,
-            "round_to_the_nearest_integer": 0,
             "salary_component": "SSC 2% (ER)",
             "salary_component_abbr": "SSC_EC_20",
-            "statistical_component": 0,
             "type": "Contribution",
-            "variable_based_on_taxable_salary": 0
         },
-		{
-            "amount": 0.0,
-            "amount_based_on_formula": 1,
-            "condition": "custom_bcn_enable_ssc and custom_bcn_ssc_hscis_category == \"Over 60yrs old\"",
-            "create_separate_payment_entry_against_benefit_claim": 0,
-            "custom_bcn_is_myanmar_ssc": 1,
-            "custom_bcn_is_one_time_contribution": 0,
-            "deduct_full_tax_on_selected_payroll_date": 0,
-            "depends_on_payment_days": 0,
-            "description": "Social Security Contribution 2.5% by employee",
-            "disabled": 0,
-            "do_not_include_in_total": 0,
-            "docstatus": 0,
+        {
             "doctype": "Salary Component",
+            "amount_based_on_formula": 1,
+            "condition": 'custom_bcn_enable_ssc and custom_bcn_ssc_hscis_category == "Over 60yrs old"',
+            "custom_bcn_is_myanmar_ssc": 1,
+            "description": "Social Security Contribution 2.5% by employee",
             "exempted_from_income_tax": 1,
             "formula": "B * 0.025 if B < 300000 else 7500",
-            "is_flexible_benefit": 0,
-            "is_income_tax_component": 0,
-            "is_tax_applicable": 0,
-            "max_benefit_amount": 0.0,
             "name": "SSC 2.5% (EE)",
-            "only_tax_impact": 0,
-            "pay_against_benefit_claim": 0,
             "remove_if_zero_valued": 1,
-            "round_to_the_nearest_integer": 0,
             "salary_component": "SSC 2.5% (EE)",
             "salary_component_abbr": "SSC_25",
-            "statistical_component": 0,
             "type": "Deduction",
-            "variable_based_on_taxable_salary": 0
         },
-		{
-            "amount": 0.0,
-            "amount_based_on_formula": 1,
-            "condition": "custom_bcn_enable_ssc and custom_bcn_ssc_hscis_category == \"Over 60yrs old\"",
-            "create_separate_payment_entry_against_benefit_claim": 0,
-            "custom_bcn_is_myanmar_ssc": 1,
-            "custom_bcn_is_one_time_contribution": 0,
-            "deduct_full_tax_on_selected_payroll_date": 0,
-            "depends_on_payment_days": 0,
-            "description": "Social Security Contribution 2.5% by employer",
-            "disabled": 0,
-            "do_not_include_in_total": 0,
-            "docstatus": 0,
+        {
             "doctype": "Salary Component",
-            "exempted_from_income_tax": 0,
+            "amount_based_on_formula": 1,
+            "condition": 'custom_bcn_enable_ssc and custom_bcn_ssc_hscis_category == "Over 60yrs old"',
+            "custom_bcn_is_myanmar_ssc": 1,
+            "description": "Social Security Contribution 2.5% by employer",
             "formula": "B * 0.025 if B < 300000 else 7500",
-            "is_flexible_benefit": 0,
-            "is_income_tax_component": 0,
-            "is_tax_applicable": 0,
-            "max_benefit_amount": 0.0,
             "name": "SSC 2.5% (ER)",
-            "only_tax_impact": 0,
-            "pay_against_benefit_claim": 0,
-            "remove_if_zero_valued": 0,
-            "round_to_the_nearest_integer": 0,
             "salary_component": "SSC 2.5% (ER)",
             "salary_component_abbr": "SSC_EC_25",
-            "statistical_component": 0,
             "type": "Contribution",
-            "variable_based_on_taxable_salary": 0
         },
-		{
-            "amount": 0.0,
+        {
+            "doctype": "Salary Component",
             "amount_based_on_formula": 1,
             "condition": "custom_bcn_enable_ssc",
-            "create_separate_payment_entry_against_benefit_claim": 0,
             "custom_bcn_is_myanmar_ssc": 1,
-            "custom_bcn_is_one_time_contribution": 0,
-            "deduct_full_tax_on_selected_payroll_date": 0,
-            "depends_on_payment_days": 0,
             "description": "Social Security Contribution 1% by employer",
-            "disabled": 0,
-            "do_not_include_in_total": 0,
-            "docstatus": 0,
-            "doctype": "Salary Component",
-            "exempted_from_income_tax": 0,
             "formula": "B * 0.01 if B < 300000 else 3000",
-            "is_flexible_benefit": 0,
-            "is_income_tax_component": 0,
-            "is_tax_applicable": 0,
-            "max_benefit_amount": 0.0,
             "name": "SSC 1% (ER)",
-            "only_tax_impact": 0,
-            "pay_against_benefit_claim": 0,
-            "remove_if_zero_valued": 0,
-            "round_to_the_nearest_integer": 0,
             "salary_component": "SSC 1% (ER)",
             "salary_component_abbr": "SSC_EC_10",
-            "statistical_component": 0,
             "type": "Contribution",
-            "variable_based_on_taxable_salary": 0
-        }
-	]
+        },
+    ]
 
-	make_records(records)
+    make_records(records)
