@@ -2,19 +2,19 @@
 // License: MIT. See license.txt
 
 frappe.ui.form.on("Salary Structure", {
-	onload: function(frm) {
+	onload: function (frm) {
 		frm.events.set_query_contributions_component(frm);
 	},
 	refresh: function (frm) {
 		frm.events.set_query_contributions_component(frm);
 	},
-	
+
 	company: function (frm) {
 		frm.events.set_query_contributions_component(frm);
 	},
 
 	set_query_contributions_component: function (frm) {
-		if (!frm.doc.company) return;		
+		if (!frm.doc.company) return;
 		frm.set_query("salary_component", "custom_bcn_contributions", function () {
 			return {
 				filters: { component_type: "contribution", company: frm.doc.company },
@@ -23,17 +23,17 @@ frappe.ui.form.on("Salary Structure", {
 		});
 	},
 
-	calculate_totals: function (frm) {		
+	calculate_totals: function (frm) {
 		var tblcontri = frm.doc.custom_bcn_contributions || [];
-		
+
 		var total_contributions = 0;
 		for (var i = 0; i < tblcontri.length; i++) {
 			total_contributions += flt(tblcontri[i].amount);
 		}
-		
+
 		frm.doc.custom_bcn_total_contribution = total_contributions;
-		frm.refresh_field("custom_bcn_total_contribution")
-	}
+		frm.refresh_field("custom_bcn_total_contribution");
+	},
 });
 
 frappe.ui.form.on("BCN Contribution Detail", {
@@ -124,13 +124,13 @@ frappe.ui.form.on("BCN Contribution Detail", {
 							cdn,
 							"is_flexible_benefit",
 							result.is_flexible_benefit,
-						);						
+						);
 						frappe.model.set_value(
 							cdt,
 							cdn,
 							"is_one_time_contribution",
 							result.custom_bcn_is_one_time_contribution,
-						);						
+						);
 						refresh_field("custom_bcn_contributions");
 					}
 				},

@@ -2,7 +2,7 @@
 // For license information, please see license.txt
 
 frappe.query_reports["Monthly Personal Income Tax"] = {
-	"filters": [
+	filters: [
 		{
 			fieldname: "upto_date",
 			label: __("Date"),
@@ -18,7 +18,7 @@ frappe.query_reports["Monthly Personal Income Tax"] = {
 			label: __("Currency"),
 			default: erpnext.get_currency(frappe.defaults.get_default("Company")),
 			width: "50px",
-			hidden: 1
+			hidden: 1,
 		},
 		{
 			fieldname: "employee",
@@ -27,7 +27,7 @@ frappe.query_reports["Monthly Personal Income Tax"] = {
 			options: "Employee",
 			width: "100px",
 		},
-		
+
 		{
 			fieldname: "company",
 			label: __("Company"),
@@ -37,7 +37,5 @@ frappe.query_reports["Monthly Personal Income Tax"] = {
 			width: "100px",
 			reqd: 1,
 		},
-
 	],
 };
-

@@ -2,161 +2,157 @@
 -->
 
 <style type="text/css">
-    .content-label {
-        color: #000 !important;
-        text-align: center;
+  .content-label {
+    color: #000 !important;
+    text-align: center;
+  }
+
+  .w-100 {
+    width: 100%;
+  }
+
+  .w-50 {
+    width: 50%;
+  }
+
+  .table-right {
+    float: right;
+  }
+
+  /* Styles specific to printing and PDF generation */
+  @media print {
+
+    /* Set page size and margins for printing */
+    @page {
+      size: A4;
+      /* Use fixed A4 page size */
+      margin-top: 10mm;
     }
 
-    .w-100 {
-        width: 100%;
+    /* Force a page break before elements with the class "page-break" */
+    .page-break {
+      page-break-before: always;
+      margin-top: 10mm;
+      /* Add some space after the break */
     }
 
-    .w-50 {
-        width: 50%;
+    /* Ensure table headers repeat on each printed page */
+    thead {
+      display: table-header-group;
     }
 
-    .table-right {
-        float: right;
+    /* Ensure table footers repeat on each printed page */
+    tfoot {
+      display: table-footer-group;
     }
-    
-    /* Styles specific to printing and PDF generation */
-    @media print {
-        /* Set page size and margins for printing */
-        @page {
-            size: A4; /* Use fixed A4 page size */
-            margin-top: 10mm;
-        }
 
-        /* Force a page break before elements with the class "page-break" */
-        .page-break {
-            page-break-before: always;
-            margin-top: 10mm; /* Add some space after the break */
-        }
-
-        /* Ensure table headers repeat on each printed page */
-        thead {
-            display: table-header-group;
-        }
-
-        /* Ensure table footers repeat on each printed page */
-        tfoot {
-            display: table-footer-group;
-        }
-
-        th, td {
-            padding: 1px;
-            /* border: 1px solid black; Example border for clarity */
-            color: #000 !important;
-        }
-
-        /* Hide elements that should not appear in print (optional) */
-        .no-print {
-            display: none !important;
-        } 
-
-        .nowrap {
-            white-space: nowrap;
-        }
-
+    th,
+    td {
+      padding: 1px;
+      /* border: 1px solid black; Example border for clarity */
+      color: #000 !important;
     }
+
+    /* Hide elements that should not appear in print (optional) */
+    .no-print {
+      display: none !important;
+    }
+
+    .nowrap {
+      white-space: nowrap;
+    }
+
+  }
 </style>
 
-<div style="font-family:Arial">	
-    <table class="w-100" border="1">
-        <thead>
+<div style="font-family:Arial">
+  <table class="w-100" border="1">
+    <thead>
+      <tr>
+        <td colspan="7" class="text-right">{%= __("ပတခ(ဝင) - ၁၅") %}</td>
+      </tr>
+      <tr>
+        <td colspan="7" class="text-center">{%= __("ဝင်ငွေခွန်ဥပဒေပုဒ်မ ၁၆(က)နှင့် ၁၆(ဂ) အရ လစာခေါင်းစဥ်နှင့်
+          အကျုံးဝင်သည့် ဝင်ငွေမှ ဝင်ငွေခွန်လစဥ် နုတ်ယူသောစာရင်း") %}</td>
+      </tr>
+
+      <tr>
+        <td colspan="7" class="text-right">
+          <span>{%= new Date(filters.upto_date).getFullYear() %} ခု၊</span>
+          <span>&nbsp; {%= new Date(filters.upto_date).toLocaleString('default', { month: 'long' }) %}လ
+            အတွက်</span>
+        </td>
+      </tr>
+
+      <tr>
+        <th class="content-label" rowspan="2">အမှတ်စဥ်</th>
+        <th class="content-label" rowspan="2">လစာအမည်</th>
+        <th class="content-label" rowspan="2">ရာထူး/အလုပ်အကိုင်</th>
+        <th class="content-label">လစာငွေ</th>
+        <th class="content-label" colspan="2">နှုတ်ယူသည့် ဝင်ငွေခွန်</th>
+        <th class="content-label">မှတ်ချက်</th>
+      </tr>
+
+      <tr>
+        <th class="content-label">ကျပ်</th>
+        <th class="content-label">ကျပ်</th>
+        <th class="content-label">ပြား</th>
+        <th class="content-label"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {%
+      let total_gross_pay = 0.0;
+      let total_pit_kyat = 0.0;
+      let total_pit_pya = 0.0;
+      %}
+
+
+      {% for(let j=0, k=data.length; j<k; j++) { %} {% if (j !=data.length - 1) { %} {% let row=data[j]; total_gross_pay
+        +=row.gross_pay %} {% kyat=row.personal_income_tax %} {% total_pit_kyat +=kyat %} <tr>
+        <td>{%= j + 1 %}</td>
+        <td>{%= row.employee_name %}</td>
+        <td>{%= row.designation %}</td>
+        <td class="text-right">{%= row.gross_pay.toLocaleString() %}</td>
+        <td class="text-right">{%= kyat.toLocaleString() %}</td>
+        <td class="text-right">{%= 0.0 %}</td>
+        <td class="text-right"></td>
+        </tr>
+        {% } %}
+        {% } %}
+
+        <tr>
+          <td class="text-center" colspan="3">{%= __("စုစုပေါင်း") %}</td>
+          <td class="text-right">{%= total_gross_pay.toLocaleString() %}</td>
+          <td class="text-right">{%= total_pit_kyat.toLocaleString() %}</td>
+          <td class="text-right">{%= 0.0 %}</td>
+          <td></td>
+        </tr>
+    </tbody>
+    <tfoot style="border-left: none; border-bottom: none; border-right: none;">
+      <tr class="mt-5">
+        <td colspan="7">
+          <table class="w-50 table-right" style="margin-top: 50px !important; margin-right: -75px !important;"
+            border="0">
             <tr>
-                <td colspan="7" class="text-right">{%= __("ပတခ(ဝင) - ၁၅") %}</td>
+              <td class="text-right">လက်မှတ်</td>
+              <td>---------------------------------------</td>
             </tr>
             <tr>
-                <td colspan="7" class="text-center">{%= __("ဝင်ငွေခွန်ဥပဒေပုဒ်မ ၁၆(က)နှင့် ၁၆(ဂ) အရ လစာခေါင်းစဥ်နှင့် အကျုံးဝင်သည့် ဝင်ငွေမှ ဝင်ငွေခွန်လစဥ် နုတ်ယူသောစာရင်း") %}</td>
-            </tr>            
-
+              <td class="text-right">အမည်</td>
+              <td>---------------------------------------</td>
+            </tr>
             <tr>
-                <td colspan="7" class="text-right">
-                    <span>{%= new Date(filters.upto_date).getFullYear() %} ခု၊</span>
-                    <span>&nbsp; {%= new Date(filters.upto_date).toLocaleString('default', { month: 'long' }) %}လ အတွက်</span>
-                </td>
+              <td class="text-right">ရာထူး</td>
+              <td>---------------------------------------</td>
             </tr>
-
             <tr>
-                <th class="content-label" rowspan="2">အမှတ်စဥ်</th>
-                <th class="content-label" rowspan="2">လစာအမည်</th>
-                <th class="content-label" rowspan="2">ရာထူး/အလုပ်အကိုင်</th>
-                <th class="content-label">လစာငွေ</th>
-                <th class="content-label" colspan="2">နှုတ်ယူသည့် ဝင်ငွေခွန်</th>
-                <th class="content-label">မှတ်ချက်</th>
+              <td class="text-right">ဌာန/ အဖွဲ့အစည်း</td>
+              <td>---------------------------------------</td>
             </tr>
-                
-            <tr>                
-                <th class="content-label">ကျပ်</th>
-                <th class="content-label">ကျပ်</th>
-                <th class="content-label">ပြား</th>
-                <th class="content-label"></th>
-            </tr>
-        </thead>
-        <tbody>
-            {% 
-                let total_gross_pay = 0.0;
-                let total_pit_kyat = 0.0;
-                let total_pit_pya = 0.0;                    
-            %} 
-           
-
-            {% for(let j=0, k=data.length; j<k; j++) { %}                            
-                {% if (j != data.length - 1) { %}                   
-
-                    {% 
-                        let row = data[j];  
-                        total_gross_pay +=  row.gross_pay                                     
-                    %} 
-
-                    {% kyat = row.personal_income_tax %}                    
-
-                    {% total_pit_kyat += kyat %}
-                    
-                    <tr>
-                        <td>{%= j + 1 %}</td>
-                        <td>{%= row.employee_name %}</td>
-                        <td>{%= row.designation %}</td>
-                        <td class="text-right">{%= row.gross_pay.toLocaleString() %}</td>
-                        <td class="text-right">{%= kyat.toLocaleString() %}</td>
-                        <td class="text-right">{%= 0.0 %}</td>
-                        <td class="text-right"></td>
-                    </tr>
-                {% } %}
-            {% } %}       
-            
-            <tr>
-                <td class="text-center" colspan="3">{%= __("စုစုပေါင်း") %}</td>
-                <td class="text-right">{%= total_gross_pay.toLocaleString() %}</td>
-                <td class="text-right">{%= total_pit_kyat.toLocaleString() %}</td>
-                <td class="text-right">{%= 0.0 %}</td>
-                <td></td>
-            </tr>
-        </tbody>            
-        <tfoot style="border-left: none; border-bottom: none; border-right: none;">
-            <tr class="mt-5">
-                <td colspan="7">
-                    <table class="w-50 table-right" style="margin-top: 50px !important; margin-right: -75px !important;" border="0">
-                        <tr>
-                            <td class="text-right">လက်မှတ်</td>
-                            <td>---------------------------------------</td>
-                        </tr>
-                        <tr>
-                            <td class="text-right">အမည်</td>
-                            <td>---------------------------------------</td>
-                        </tr>
-                        <tr>
-                            <td class="text-right">ရာထူး</td>
-                            <td>---------------------------------------</td>
-                        </tr>
-                        <tr>
-                            <td class="text-right">ဌာန/ အဖွဲ့အစည်း</td>
-                            <td>---------------------------------------</td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>            
-        </tfoot>
-    </table>
+          </table>
+        </td>
+      </tr>
+    </tfoot>
+  </table>
 </div>

@@ -3,7 +3,7 @@ import click
 from bcn_myanmar_hr_compliance.setup import before_uninstall as cleanup
 
 
-def after_install():
+def before_uninstall():
 	try:
 		print("Removing customizations created by BCN Myanmar HR Compliance...")
 		cleanup()

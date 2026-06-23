@@ -2,118 +2,124 @@
 -->
 
 <style type="text/css">
-    .content-label {
-        color: #000 !important;
-        text-align: center;
+  .content-label {
+    color: #000 !important;
+    text-align: center;
+  }
+
+  /* Styles specific to printing and PDF generation */
+  @media print {
+
+    /* Set page size and margins for printing */
+    @page {
+      size: A4;
+      /* Use fixed A4 page size */
+      margin-top: 10mm;
     }
-    
-    /* Styles specific to printing and PDF generation */
-    @media print {
-        /* Set page size and margins for printing */
-        @page {
-            size: A4; /* Use fixed A4 page size */
-            margin-top: 10mm;
-        }
 
-        /* Force a page break before elements with the class "page-break" */
-        .page-break {
-            page-break-before: always;
-            margin-top: 10mm; /* Add some space after the break */
-        }
-
-        /* Ensure table headers repeat on each printed page */
-        thead {
-            display: table-header-group;
-        }
-
-        /* Ensure table footers repeat on each printed page */
-        tfoot {
-            display: table-footer-group;
-        }
-
-        th, td {
-            padding: 1px;
-            border: 1px solid black; /* Example border for clarity */
-            color: #000 !important;
-        }
-
-        /* Hide elements that should not appear in print (optional) */
-        .no-print {
-            display: none !important;
-        }     
-        
-        .w-100 {
-            width: 100%;
-        }
-
-        .nowrap {
-            white-space: nowrap;
-        }
+    /* Force a page break before elements with the class "page-break" */
+    .page-break {
+      page-break-before: always;
+      margin-top: 10mm;
+      /* Add some space after the break */
     }
+
+    /* Ensure table headers repeat on each printed page */
+    thead {
+      display: table-header-group;
+    }
+
+    /* Ensure table footers repeat on each printed page */
+    tfoot {
+      display: table-footer-group;
+    }
+
+    th,
+    td {
+      padding: 1px;
+      border: 1px solid black;
+      /* Example border for clarity */
+      color: #000 !important;
+    }
+
+    /* Hide elements that should not appear in print (optional) */
+    .no-print {
+      display: none !important;
+    }
+
+    .w-100 {
+      width: 100%;
+    }
+
+    .nowrap {
+      white-space: nowrap;
+    }
+  }
 </style>
 
-<div style="font-family:Arial">	
-    <table class="w-100" border="1">
-        <thead>
-            <tr>
-                <td colspan="12" class="text-right">{%= __("နည်းဥပ‌ဒေ ၆၆( က )၊ (ပုံစံ - ၁၃)") %}</td>
-            </tr>
-            <tr>
-                <td colspan="12" class="text-center">{%= __("လူမှုဖူလုံ‌ရေးအဖွဲ့ အာမခံထားသူများအတွက် လစဉ်ထည့်ဝင်‌ကြေးပေးသွင်းငွေစာရင်း") %}</td>
-            </tr>
-            <tr>
-                <td colspan="2">{%= __("အလုပ်ဌာနအမည် - ") %}</td>
-                <td colspan="5">{%= filters.company %}</td>
-                <td colspan="2">{%= __("အလုပ်ဌာနမှတ်ပုံတင်အမှတ် -") %}</td>
-                <td colspan="3" class="text-right">                    
-                    {%= filters.company_ssc_reg_no %}
-                </td>
-            </tr>
+<div style="font-family:Arial">
+  <table class="w-100" border="1">
+    <thead>
+      <tr>
+        <td colspan="12" class="text-right">{%= __("နည်းဥပ‌ဒေ ၆၆( က )၊ (ပုံစံ - ၁၃)") %}</td>
+      </tr>
+      <tr>
+        <td colspan="12" class="text-center">{%= __("လူမှုဖူလုံ‌ရေးအဖွဲ့ အာမခံထားသူများအတွက်
+          လစဉ်ထည့်ဝင်‌ကြေးပေးသွင်းငွေစာရင်း") %}</td>
+      </tr>
+      <tr>
+        <td colspan="2">{%= __("အလုပ်ဌာနအမည် - ") %}</td>
+        <td colspan="5">{%= filters.company %}</td>
+        <td colspan="2">{%= __("အလုပ်ဌာနမှတ်ပုံတင်အမှတ် -") %}</td>
+        <td colspan="3" class="text-right">
+          {%= filters.company_ssc_reg_no %}
+        </td>
+      </tr>
 
-            <tr>
-                <td colspan="12" class="text-right">
-                    {%= new Date(filters.upto_date).toLocaleString('default', { month: 'long' }) %}
-                </td>
-            </tr>
+      <tr>
+        <td colspan="12" class="text-right">
+          {%= new Date(filters.upto_date).toLocaleString('default', { month: 'long' }) %}
+        </td>
+      </tr>
 
-            <tr>
-                <th rowspan="2" class="content-label">Sr No. <br>စဉ်</th>
-                <th rowspan="2" class="content-label nowrap" style="width: 20%">Insurance Name <br>အာမခံထားသူအမည်</th>
-                <th rowspan="2" class="content-label">SSN. No <br> အာမခံစိစစ်ရေးအမှတ်</th>
-                <th rowspan="2" class="content-label">Gender <br> က/မ <br>အမျိုးအစား</th>
-                <th rowspan="2" class="content-label">Payment <br>လုပ်ခလစာ</th>
-                <th colspan="2" class="content-label">Health and Social Care Insurance System <br>ကျန်းမာရေးစောင့်ရှောက်မှုအာမခံစနစ်</th>
-                <th rowspan="2" class="content-label">Employment Injury Benefit Insurance System <br>အလုပ်တွင်ထိခိုက်မှု အကျိုးခံစားခွင့် အာမခံစနစ်</th>
-                <th colspan="3" class="content-label">Total <br>စုစုပေါင်း</th>
-                <th rowspan="2" class="content-label" style="width: 20%">Remark <br>မှတ်ချက်</th>
-            </tr>
-            <tr>
-                <th class="content-label">Employer<br>အလုပ်ရှင်</th>
-                <th class="content-label">Employee<br>အလုပ်သမား</th>
-                <th class="content-label">Employer<br>အလုပ်ရှင်</th>
-                <th class="content-label">Employee<br>အလုပ်သမား</th>   
-                <th class="content-label">Total <br>စုစုပေါင်း</th>             
-            </tr> 
-        </thead>
-        <tbody>
-            {% for(let j=0, k=data.length; j<k; j++) { %}   
-                {% var row = data[j]; %}             
-                <tr>
-                    <td>{%= j + 1 %}</td>
-                    <td>{%= row.employee_name %}</td>
-                    <td>{%= row.ssn_no %}</td>
-                    <td>{%= row.gender %}</td>
-                    <td class="text-right">{%= row.payment.toLocaleString() %}</td>
-                    <td class="text-right">{%= row.employer_ssc.toLocaleString() %}</td>
-                    <td class="text-right">{%= row.employee_ssc.toLocaleString() %}</td>
-                    <td class="text-right">{%= row.employer_injury.toLocaleString() %}</td>
-                    <td class="text-right">{%= row.total_employer_ssc.toLocaleString() %}</td>
-                    <td class="text-right">{%= row.total_employee_ssc.toLocaleString() %}</td>
-                    <td class="text-right">{%= row.total_ssc %}</td>
-                    <td class="text-right"></td>
-                </tr>
-            {% } %}
-                   
-        </tbody>
-    </table>
+      <tr>
+        <th rowspan="2" class="content-label">Sr No. <br>စဉ်</th>
+        <th rowspan="2" class="content-label nowrap" style="width: 20%">Insurance Name <br>အာမခံထားသူအမည်</th>
+        <th rowspan="2" class="content-label">SSN. No <br> အာမခံစိစစ်ရေးအမှတ်</th>
+        <th rowspan="2" class="content-label">Gender <br> က/မ <br>အမျိုးအစား</th>
+        <th rowspan="2" class="content-label">Payment <br>လုပ်ခလစာ</th>
+        <th colspan="2" class="content-label">Health and Social Care Insurance System
+          <br>ကျန်းမာရေးစောင့်ရှောက်မှုအာမခံစနစ်</th>
+        <th rowspan="2" class="content-label">Employment Injury Benefit Insurance System <br>အလုပ်တွင်ထိခိုက်မှု
+          အကျိုးခံစားခွင့် အာမခံစနစ်</th>
+        <th colspan="3" class="content-label">Total <br>စုစုပေါင်း</th>
+        <th rowspan="2" class="content-label" style="width: 20%">Remark <br>မှတ်ချက်</th>
+      </tr>
+      <tr>
+        <th class="content-label">Employer<br>အလုပ်ရှင်</th>
+        <th class="content-label">Employee<br>အလုပ်သမား</th>
+        <th class="content-label">Employer<br>အလုပ်ရှင်</th>
+        <th class="content-label">Employee<br>အလုပ်သမား</th>
+        <th class="content-label">Total <br>စုစုပေါင်း</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for(let j=0, k=data.length; j<k; j++) { %} {% var row=data[j]; %} <tr>
+        <td>{%= j + 1 %}</td>
+        <td>{%= row.employee_name %}</td>
+        <td>{%= row.ssn_no %}</td>
+        <td>{%= row.gender %}</td>
+        <td class="text-right">{%= row.payment.toLocaleString() %}</td>
+        <td class="text-right">{%= row.employer_ssc.toLocaleString() %}</td>
+        <td class="text-right">{%= row.employee_ssc.toLocaleString() %}</td>
+        <td class="text-right">{%= row.employer_injury.toLocaleString() %}</td>
+        <td class="text-right">{%= row.total_employer_ssc.toLocaleString() %}</td>
+        <td class="text-right">{%= row.total_employee_ssc.toLocaleString() %}</td>
+        <td class="text-right">{%= row.total_ssc %}</td>
+        <td class="text-right"></td>
+        </tr>
+        {% } %}
+
+    </tbody>
+  </table>
 </div>

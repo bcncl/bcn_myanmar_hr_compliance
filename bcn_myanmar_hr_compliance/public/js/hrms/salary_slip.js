@@ -2,20 +2,20 @@
 // License: MIT. See license.txt
 
 frappe.ui.form.on("Salary Slip", {
-    setup: function (frm) {
+	setup: function (frm) {
 		frm.get_field("custom_bcn_contributions").grid.editable_fields = [
 			{ fieldname: "salary_component", columns: 6 },
 			{ fieldname: "amount", columns: 4 },
 		];
 
-        frm.set_query("salary_component", "custom_bcn_contributions", function () {
+		frm.set_query("salary_component", "custom_bcn_contributions", function () {
 			return {
 				filters: {
 					type: "contribution",
 				},
 			};
 		});
-    },	
+	},
 });
 
 // frappe.ui.form.on("BCN Contribution Detail", {
@@ -31,13 +31,13 @@ frappe.ui.form.on("Salary Slip", {
 // 				callback: function (data) {
 // 					if (data.message) {
 // 						var result = data.message;
-						
+
 // 						frappe.model.set_value(
 // 							cdt,
 // 							cdn,
 // 							"is_one_time_contribution",
 // 							result.custom_bcn_is_one_time_contribution,
-// 						);						
+// 						);
 // 						refresh_field("custom_bcn_contributions");
 // 					}
 // 				},

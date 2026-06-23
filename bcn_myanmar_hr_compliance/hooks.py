@@ -8,7 +8,7 @@ app_license = "agpl-3.0"
 # Apps
 # ------------------
 
-required_apps = ["frappe/erpnext", "frappe/hrms"]
+required_apps = ["frappe/hrms"]
 # Each item in the list will be shown as an app in the apps page
 # add_to_apps_screen = [
 # 	{
@@ -43,11 +43,11 @@ required_apps = ["frappe/erpnext", "frappe/hrms"]
 
 # include js in doctype views
 doctype_js = {
+    "Employee": "public/js/hrms/employee.js",
+	"Payroll Entry": "public/js/hrms/payroll_entry.js",
 	"Salary Component" : "public/js/hrms/salary_component.js",
 	"Salary Structure" : "public/js/hrms/salary_structure.js",
 	"Salary Slip": "public/js/hrms/salary_slip.js",
-	"Payroll Entry": "public/js/hrms/payroll_entry.js",
-    "Employee": "public/js/hrms/employee.js"
 }
 
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
