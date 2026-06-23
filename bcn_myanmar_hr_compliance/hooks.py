@@ -8,8 +8,7 @@ app_license = "agpl-3.0"
 # Apps
 # ------------------
 
-# required_apps = []
-
+required_apps = ["frappe/erpnext", "frappe/hrms"]
 # Each item in the list will be shown as an app in the apps page
 # add_to_apps_screen = [
 # 	{
@@ -138,6 +137,20 @@ before_uninstall = "bcn_myanmar_hr_compliance.uninstall.before_uninstall"
 # 	"Event": "frappe.desk.doctype.event.event.has_permission",
 # }
 
+# DocType Class
+# ---------------
+# Override standard doctype classes
+
+override_doctype_class = {
+    "Employee": "bcn_myanmar_hr_compliance.bcn_myanmar_payroll.overrides.employee.BCNEmployee",
+    "Salary Structure": "bcn_myanmar_hr_compliance.bcn_myanmar_payroll.overrides.salary_structure.BCNSalaryStructure",
+	"Salary Slip": "bcn_myanmar_hr_compliance.bcn_myanmar_payroll.overrides.salary_slip.BCNSalarySlip",
+	"Employee Tax Exemption Declaration": "bcn_myanmar_hr_compliance.bcn_myanmar_payroll.overrides.employee_tax_exemption_declaration.BCNEmployeeTaxExemptionDeclaration",
+	"Employee Tax Exemption Proof Submission": "bcn_myanmar_hr_compliance.bcn_myanmar_payroll.overrides.employee_tax_exemption_proof_submission.BCNEmployeeTaxExemptionProofSubmission",
+	"Salary Component": "bcn_myanmar_hr_compliance.bcn_myanmar_payroll.overrides.salary_component.BCNSalaryComponent",
+	"Payroll Entry": "bcn_myanmar_hr_compliance.bcn_myanmar_payroll.overrides.payroll_entry.BCNPayrollEntry"
+}
+
 # Document Events
 # ---------------
 # Hook on document methods and events
@@ -180,16 +193,9 @@ before_uninstall = "bcn_myanmar_hr_compliance.uninstall.before_uninstall"
 # ------------------------------
 #
 # Specify custom mixins to extend the standard doctype controller.
-
-extend_doctype_class = {
-    "Employee": "bcn_myanmar_hr_compliance.bcn_myanmar_payroll.overrides.employee.BCNEmployee",
-    "Salary Structure": "bcn_myanmar_hr_compliance.bcn_myanmar_payroll.overrides.salary_structure.BCNSalaryStructure",
-	"Salary Slip": "bcn_myanmar_hr_compliance.bcn_myanmar_payroll.overrides.salary_slip.BCNSalarySlip",
-	"Employee Tax Exemption Declaration": "bcn_myanmar_hr_compliance.bcn_myanmar_payroll.overrides.employee_tax_exemption_declaration.BCNEmployeeTaxExemptionDeclaration",
-	"Employee Tax Exemption Proof Submission": "bcn_myanmar_hr_compliance.bcn_myanmar_payroll.overrides.employee_tax_exemption_proof_submission.BCNEmployeeTaxExemptionProofSubmission",
-	"Salary Component": "bcn_myanmar_hr_compliance.bcn_myanmar_payroll.overrides.salary_component.BCNSalaryComponent",
-	"Payroll Entry": "bcn_myanmar_hr_compliance.bcn_myanmar_payroll.overrides.payroll_entry.BCNPayrollEntry"
-}
+# extend_doctype_class = {
+# 	"Task": "my_app.custom.task.CustomTaskMixin"
+# }
 
 # Overriding Methods
 # ------------------------------
