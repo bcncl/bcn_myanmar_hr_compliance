@@ -114,6 +114,12 @@ after_install = "bcn_myanmar_hr_compliance.install.after_install"
 # before_app_uninstall = "bcn_myanmar_hr_compliance.utils.before_app_uninstall"
 # after_app_uninstall = "bcn_myanmar_hr_compliance.utils.after_app_uninstall"
 
+# Build
+# ------------------
+# To hook into the build process
+
+# after_build = "my_app.build.after_build"
+
 # Desk Notifications
 # ------------------
 # See frappe.core.notifications.get_notification_config
@@ -132,20 +138,6 @@ after_install = "bcn_myanmar_hr_compliance.install.after_install"
 # 	"Event": "frappe.desk.doctype.event.event.has_permission",
 # }
 
-# DocType Class
-# ---------------
-# Override standard doctype classes
-
-override_doctype_class = {
-    "Employee": "bcn_myanmar_hr_compliance.bcn_myanmar_payroll.overrides.employee.BCNEmployee",
-    "Salary Structure": "bcn_myanmar_hr_compliance.bcn_myanmar_payroll.overrides.salary_structure.BCNSalaryStructure",
-	"Salary Slip": "bcn_myanmar_hr_compliance.bcn_myanmar_payroll.overrides.salary_slip.BCNSalarySlip",
-	"Employee Tax Exemption Declaration": "bcn_myanmar_hr_compliance.bcn_myanmar_payroll.overrides.employee_tax_exemption_declaration.BCNEmployeeTaxExemptionDeclaration",
-	"Employee Tax Exemption Proof Submission": "bcn_myanmar_hr_compliance.bcn_myanmar_payroll.overrides.employee_tax_exemption_proof_submission.BCNEmployeeTaxExemptionProofSubmission",
-	"Salary Component": "bcn_myanmar_hr_compliance.bcn_myanmar_payroll.overrides.salary_component.BCNSalaryComponent",
-	"Payroll Entry": "bcn_myanmar_hr_compliance.bcn_myanmar_payroll.overrides.payroll_entry.BCNPayrollEntry"
-}
-
 # Document Events
 # ---------------
 # Hook on document methods and events
@@ -161,28 +153,43 @@ override_doctype_class = {
 # Scheduled Tasks
 # ---------------
 
-scheduler_events = {
-	# "all": [
-	# 	"bcn_myanmar_hr_compliance.tasks.all"
-	# ],
-	# "daily": [
-	# 	"bcn_myanmar_hr_compliance.bcn_myanmar_payroll.utils.auto_create_payroll_period",
-	# ],
-	# "hourly": [
-	# 	"bcn_myanmar_hr_compliance.tasks.hourly"
-	# ],
-	# "weekly": [
-	# 	"bcn_myanmar_hr_compliance.tasks.weekly"
-	# ],
-	# "monthly": [
-	# 	"bcn_myanmar_hr_compliance.tasks.monthly"
-	# ],
-}
+# scheduler_events = {
+# 	"all": [
+# 		"bcn_myanmar_hr_compliance.tasks.all"
+# 	],
+# 	"daily": [
+# 		"bcn_myanmar_hr_compliance.bcn_myanmar_payroll.utils.auto_create_payroll_period",
+# 	],
+# 	"hourly": [
+# 		"bcn_myanmar_hr_compliance.tasks.hourly"
+# 	],
+# 	"weekly": [
+# 		"bcn_myanmar_hr_compliance.tasks.weekly"
+# 	],
+# 	"monthly": [
+# 		"bcn_myanmar_hr_compliance.tasks.monthly"
+# 	],
+# }
 
 # Testing
 # -------
 
 # before_tests = "bcn_myanmar_hr_compliance.install.before_tests"
+
+# Extend DocType Class
+# ------------------------------
+#
+# Specify custom mixins to extend the standard doctype controller.
+
+extend_doctype_class = {
+    "Employee": "bcn_myanmar_hr_compliance.bcn_myanmar_payroll.overrides.employee.BCNEmployee",
+    "Salary Structure": "bcn_myanmar_hr_compliance.bcn_myanmar_payroll.overrides.salary_structure.BCNSalaryStructure",
+	"Salary Slip": "bcn_myanmar_hr_compliance.bcn_myanmar_payroll.overrides.salary_slip.BCNSalarySlip",
+	"Employee Tax Exemption Declaration": "bcn_myanmar_hr_compliance.bcn_myanmar_payroll.overrides.employee_tax_exemption_declaration.BCNEmployeeTaxExemptionDeclaration",
+	"Employee Tax Exemption Proof Submission": "bcn_myanmar_hr_compliance.bcn_myanmar_payroll.overrides.employee_tax_exemption_proof_submission.BCNEmployeeTaxExemptionProofSubmission",
+	"Salary Component": "bcn_myanmar_hr_compliance.bcn_myanmar_payroll.overrides.salary_component.BCNSalaryComponent",
+	"Payroll Entry": "bcn_myanmar_hr_compliance.bcn_myanmar_payroll.overrides.payroll_entry.BCNPayrollEntry"
+}
 
 # Overriding Methods
 # ------------------------------
