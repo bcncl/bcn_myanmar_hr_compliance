@@ -1,6 +1,7 @@
 import click
- 
+
 from bcn_myanmar_hr_compliance.setup import after_install as setup
+
 
 def after_install():
 	try:

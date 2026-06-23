@@ -1,11 +1,12 @@
-#import frappe
+
 from frappe.desk.page.setup_wizard.setup_wizard import make_records
+
 
 def after_install():
 	create_property_setters()
 	create_salary_components()
 
-def create_property_setters():	
+def create_property_setters():
 	records = [
         {
             "doc_type": "Salary Component",
@@ -199,5 +200,5 @@ def create_salary_components():
             "variable_based_on_taxable_salary": 0
         }
 	]
-    
+
 	make_records(records)
