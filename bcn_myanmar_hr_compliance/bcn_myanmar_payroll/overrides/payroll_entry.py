@@ -17,10 +17,10 @@ from hrms.payroll.doctype.payroll_entry.payroll_entry import PayrollEntry
 class BCNPayrollEntry(PayrollEntry):
 	@frappe.whitelist()
 	def submit_salary_slips(self):
-		self.validate_contirbution_expense_account()
+		self.validate_contribution_expense_account()
 		super().submit_salary_slips()
 
-	def validate_contirbution_expense_account(self):
+	def validate_contribution_expense_account(self):
 		salary_slip_list_query = frappe.qb.get_query(
 			"Salary Slip",
 			filters={"docstatus": 0, "payroll_entry": self.name},
