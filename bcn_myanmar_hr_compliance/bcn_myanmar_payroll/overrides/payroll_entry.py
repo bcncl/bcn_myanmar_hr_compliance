@@ -99,6 +99,7 @@ class BCNPayrollEntry(PayrollEntry):
 				accounting_dimensions,
 				precision,
 				payable_amount,
+				employee_wise_accounting_enabled,
 			)
 
 			payable_amount = self.set_accounting_entries_for_advance_deductions(
@@ -151,6 +152,7 @@ class BCNPayrollEntry(PayrollEntry):
 				).format(self.start_date, self.end_date),
 				submit_journal_entry=True,
 				submitted_salary_slips=submitted_salary_slips,
+				employee_wise_accounting_enabled=employee_wise_accounting_enabled,
 			)
 
 			self.create_er_contribution_journal_entry()
